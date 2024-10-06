@@ -1,0 +1,43 @@
+{
+  "auth": {
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/{YOUR_TENANT_ID}",
+          "clientIdSettingName": "AAD_CLIENT_ID",
+          "clientSecretSettingName": "AAD_CLIENT_SECRET"
+        },
+        "login": {
+          "loginParameters": [
+            "response_type=code",
+            "prompt=login"
+          ]
+        }
+      },
+      "github": {
+        "registration": {
+          "clientIdSettingName": "GITHUB_CLIENT_ID",
+          "clientSecretSettingName": "GITHUB_CLIENT_SECRET"
+        }
+      },
+      "google": {
+        "registration": {
+          "clientIdSettingName": "GOOGLE_CLIENT_ID",
+          "clientSecretSettingName": "GOOGLE_CLIENT_SECRET"
+        }
+      },
+      "facebook": {
+        "registration": {
+          "clientIdSettingName": "FACEBOOK_APP_ID",
+          "clientSecretSettingName": "FACEBOOK_APP_SECRET"
+        }
+      },
+      "twitter": {
+        "registration": {
+          "consumerKeySettingName": "TWITTER_API_KEY",
+          "consumerSecretSettingName": "TWITTER_API_SECRET_KEY"
+        }
+      }
+    }
+  }
+}
