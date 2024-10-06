@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Welcome to a11code.com! <br/> The sight is currently under maintenance. <br/> Please check back later.
+          Welcome to a11code! <br/> The sight is currently under maintenance. <br/> Please check back later.
         </p>
       </header>
     </div>
