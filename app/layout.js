@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata = {
-  title: 'A11Code - Empowering Visually Impaired Minds in STEM',
+  title: 'A11Code \u2014 Breaking Barriers in STEM',
   description:
     'A coding platform for visually impaired students offering accessible programming courses, digitized study materials, blogs, and resources for STEM education.',
 };
