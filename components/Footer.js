@@ -11,7 +11,7 @@ export default function Footer() {
           <div className={styles.footerSection}>
             <h2 className={styles.footerHeading}>A11Code</h2>
             <p className={styles.footerTagline}>
-              Empowering Visually Impaired Minds in STEM
+              Empowering Visually Impaired Students in STEM
             </p>
           </div>
 

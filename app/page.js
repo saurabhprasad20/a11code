@@ -39,7 +39,7 @@ export default function Home() {
         <div className="container">
           <h1 className={styles.heroTitle}>Welcome to A11Code</h1>
           <p className={styles.heroTagline}>
-            Empowering Visually Impaired Minds in STEM
+            Empowering Visually Impaired Students in STEM
           </p>
           <p className={styles.heroDescription}>
             A coding platform for visually impaired students. Our mission is to
