@@ -1,0 +1,61 @@
+.hero {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #ffffff;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.heroTitle {
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.heroTagline {
+  font-size: 1.25rem;
+  color: #e2e8f0;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.heroDescription {
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  max-width: 42rem;
+  margin: 0 auto 2rem;
+  line-height: 1.8;
+}
+
+.heroCta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.about {
+  background: var(--color-bg-alt);
+  padding: 3rem 0;
+}
+
+.about p {
+  max-width: 42rem;
+  margin: 0 auto 1rem;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 0;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+  }
+}
