@@ -1,20 +1,44 @@
 .header {
   background: var(--color-primary);
   color: #ffffff;
+}
+
+/* Brand bar (top row): logo, skip link, theme toggle */
+.brandbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.brandInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+}
+
+/* Navbar (second row): its own sticky strip */
+.navbar {
   position: sticky;
   top: 0;
   z-index: 100;
+  background: var(--color-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-.headerInner {
+.navInner {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: var(--header-height);
+  min-height: 3.25rem;
 }
 
 .logo {
@@ -37,13 +61,6 @@
 
 .logoText {
   letter-spacing: 0.02em;
-}
-
-/* Right-side header controls */
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
 
 /* Mobile menu toggle */
@@ -152,7 +169,7 @@
   .nav {
     display: none;
     position: absolute;
-    top: var(--header-height);
+    top: 100%;
     left: 0;
     right: 0;
     background: var(--color-primary);

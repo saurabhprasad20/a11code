@@ -18,9 +18,6 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <a href="#main-content" className="skip-nav">
-          Skip to main content
-        </a>
         <RouteFocus />
         <Header />
         <main id="main-content" role="main" tabIndex={-1}>

@@ -51,13 +51,27 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.headerInner}>
-        <Link href="/" className={styles.logo} aria-label="A11Code - Home">
-          <span className={styles.logoIcon} aria-hidden="true">&#9881;</span>
-          <span className={styles.logoText}>A11Code</span>
-        </Link>
+      {/* Brand bar: title/logo, skip link, then theme toggle */}
+      <div className={styles.brandbar}>
+        <div className={styles.brandInner}>
+          <Link href="/" className={styles.logo} aria-label="A11Code - Home">
+            <span className={styles.logoIcon} aria-hidden="true">&#9881;</span>
+            <span className={styles.logoText}>A11Code</span>
+          </Link>
 
-        <div className={styles.actions}>
+          <a href="#main-content" className="skip-nav">
+            Skip to main content
+          </a>
+
+          <div className={styles.tools}>
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
+
+      {/* Navbar: its own sticky strip below the brand bar */}
+      <div className={styles.navbar}>
+        <div className={styles.navInner}>
           <button
             className={styles.menuToggle}
             onClick={() => setMenuOpen(!menuOpen)}
@@ -128,7 +142,6 @@ export default function Header() {
             </li>
           </ul>
         </nav>
-        <ThemeToggle />
         </div>
       </div>
     </header>
