@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { courses } from '../data/courses';
+import ThemeToggle from './ThemeToggle';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -56,23 +57,24 @@ export default function Header() {
           <span className={styles.logoText}>A11Code</span>
         </Link>
 
-        <button
-          className={styles.menuToggle}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-expanded={menuOpen}
-          aria-controls="main-navigation"
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-        >
-          <span className={styles.menuBar} aria-hidden="true"></span>
-          <span className={styles.menuBar} aria-hidden="true"></span>
-          <span className={styles.menuBar} aria-hidden="true"></span>
-        </button>
+        <div className={styles.actions}>
+          <button
+            className={styles.menuToggle}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-expanded={menuOpen}
+            aria-controls="main-navigation"
+            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          >
+            <span className={styles.menuBar} aria-hidden="true"></span>
+            <span className={styles.menuBar} aria-hidden="true"></span>
+            <span className={styles.menuBar} aria-hidden="true"></span>
+          </button>
 
-        <nav
-          id="main-navigation"
-          className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}
-          aria-label="Main navigation"
-        >
+          <nav
+            id="main-navigation"
+            className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}
+            aria-label="Main navigation"
+          >
           <ul className={styles.navList} role="list">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -126,6 +128,8 @@ export default function Header() {
             </li>
           </ul>
         </nav>
+        <ThemeToggle />
+        </div>
       </div>
     </header>
   );

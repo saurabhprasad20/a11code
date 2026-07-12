@@ -30,7 +30,7 @@ export default function CoursesPage() {
                 <h2 style={{ fontSize: '1.25rem' }}>{course.title}</h2>
                 <p>{course.description}</p>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-light)', marginBottom: '1rem' }}>
-                  {course.chapters.length} chapters
+                  {course.level} &middot; {course.chapters.length} chapters
                 </p>
                 <Link
                   href={`/courses/${course.id}`}

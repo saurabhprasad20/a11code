@@ -31,8 +31,8 @@ export default function ContactPage() {
               <div style={{ marginBottom: '1.25rem' }}>
                 <dt style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Email</dt>
                 <dd>
-                  <a href="mailto:saurabhiiitd@gmail.com">
-                    saurabhiiitd@gmail.com
+                  <a href="mailto:saurabhprasad20@gmail.com">
+                    saurabhprasad20@gmail.com
                   </a>
                 </dd>
               </div>

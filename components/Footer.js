@@ -51,8 +51,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:saurabhiiitd@gmail.com">
-                  saurabhiiitd@gmail.com
+                <a href="mailto:saurabhprasad20@gmail.com">
+                  saurabhprasad20@gmail.com
                 </a>
               </li>
             </ul>

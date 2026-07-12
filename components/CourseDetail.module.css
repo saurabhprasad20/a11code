@@ -13,7 +13,15 @@
 }
 
 .breadcrumb a {
+  color: #ffffff;
+}
+
+.courseMeta {
   color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
 }
 
 .breadcrumb li[aria-current='page'] {

@@ -80,15 +80,16 @@ export default function Home() {
         <div className="container">
           <h2 className={styles.sectionTitle}>About the Founder</h2>
           <p>
-            I am Saurabh Prasad, a 2023 IIIT Delhi Computer Science graduate
-            and currently working as a software engineer at Microsoft. I am a
-            learning enthusiast, passionate about programming and building ideas
-            against existing barriers.
+            I am Saurabh Prasad, a 2023 Computer Science graduate from IIIT Delhi, now
+            working as a software engineer at Microsoft. I started A11Code because far too
+            many visually impaired students give up Mathematics and Science not for lack of
+            ability, but for lack of accessible material, guidance, and encouragement.
           </p>
           <p>
-            Our team is dedicated to creating an inclusive community that fosters
-            learning and growth. We value feedback from our users and are
-            committed to continuously improving our platform to meet their needs.
+            Everything here &mdash; the courses, the resources, the blog, and the games &mdash; is
+            built and tested with screen readers and the keyboard first. If something is hard to
+            use or a topic you need is missing, I want to hear about it, because this platform
+            grows from the feedback of the people it is for.
           </p>
         </div>
       </section>

@@ -3,40 +3,44 @@ export const games = [
     id: 'code-quiz',
     title: 'Code Quiz',
     description:
-      'Test your programming knowledge with this accessible audio-based quiz game. Questions cover Python, Java, and general programming concepts. Fully keyboard navigable with screen reader announcements for each question and result.',
+      'Test your programming knowledge with this accessible quiz. Questions cover Python, Java, and general programming concepts. Fully keyboard navigable with screen reader announcements for each question and result.',
+    tagline: 'Programming knowledge quiz',
     type: 'web',
-    link: '#',
   },
   {
     id: 'number-riddle',
     title: 'Number Riddle',
     description:
-      'A number guessing game where you use logic and hints to find the hidden number. The game provides audio and text feedback for each guess, telling you if you are too high, too low, or correct. Great for building logical thinking skills.',
+      'A number guessing game where you use logic and hints to find the hidden number. The game announces whether each guess is too high, too low, or correct, and tracks how many tries you take. Great for building logical thinking.',
+    tagline: 'Guess the hidden number',
     type: 'web',
-    link: '#',
   },
   {
-    id: 'text-adventure',
+    id: 'stem-explorer',
     title: 'STEM Explorer: A Text Adventure',
     description:
-      'Embark on a text-based adventure where you solve science and math puzzles to progress through the story. Navigate a research lab, decode equations, and make choices that shape your journey. Entirely text-based and fully accessible.',
+      'A text-based adventure where you solve science and maths puzzles to progress through the story. Navigate a research lab, answer questions, and make choices that shape your journey. Entirely text-based and fully accessible.',
+    tagline: 'Solve puzzles, shape the story',
     type: 'web',
-    link: '#',
   },
   {
     id: 'typing-champion',
     title: 'Typing Champion',
     description:
-      'Improve your typing speed and accuracy with this accessible typing practice game. Features audio feedback for each keystroke, words-per-minute tracking, and progressive difficulty levels. Perfect for building coding speed.',
+      'Improve your typing speed and accuracy with this accessible typing practice. Your words-per-minute and accuracy are announced when you finish each passage. Perfect for building coding speed at the keyboard.',
+    tagline: 'Practise typing speed and accuracy',
     type: 'web',
-    link: '#',
   },
   {
     id: 'audio-memory',
     title: 'Audio Memory Match',
     description:
-      'A memory card game using sounds instead of images. Listen to audio clips and match pairs using keyboard navigation. Trains memory and concentration while being fully accessible. Features multiple sound themes including musical instruments and animal sounds.',
+      'A memory game that uses musical tones instead of images. Each tile plays a note; find the matching pairs using only your ears and the keyboard. Trains memory and concentration while being fully accessible.',
+    tagline: 'Match pairs of tones by ear',
     type: 'web',
-    link: '#',
   },
 ];
+
+export function getGame(id) {
+  return games.find((game) => game.id === id);
+}

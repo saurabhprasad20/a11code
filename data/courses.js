@@ -4,6 +4,7 @@ export const courses = [
     title: 'Python for Beginners',
     description:
       'Learn Python from scratch with accessible examples and screen-reader-friendly exercises. Covers fundamentals, data types, control flow, and functions.',
+    level: 'Beginner',
     chapters: [
       {
         id: 'introduction',
@@ -281,6 +282,7 @@ Functions are defined with the def keyword and called by name. Parameters let fu
     title: 'Java Fundamentals',
     description:
       'Explore Java programming with accessible, step-by-step lessons. Learn object-oriented programming, collections, and error handling.',
+    level: 'Beginner to Intermediate',
     chapters: [
       {
         id: 'introduction',
@@ -617,6 +619,7 @@ Exceptions disrupt normal program flow. Try-catch blocks let you handle errors g
     title: 'Web Accessibility 101',
     description:
       'Understand the principles of web accessibility. Learn about semantic HTML, ARIA attributes, and how to test your websites for accessibility.',
+    level: 'Beginner',
     chapters: [
       {
         id: 'introduction',

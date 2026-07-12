@@ -47,6 +47,10 @@ export default function CourseDetail({ courseId }) {
             </ol>
           </nav>
           <h1>{course.title}</h1>
+          <p>{course.description}</p>
+          <p className={styles.courseMeta}>
+            {course.level} &middot; {course.chapters.length} chapters
+          </p>
         </div>
       </section>
 
