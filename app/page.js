@@ -38,9 +38,6 @@ export default function Home() {
       <section className={styles.hero} aria-label="Welcome to A11Code">
         <div className="container">
           <h1 className={styles.heroTitle}>Welcome to A11Code</h1>
-          <p className={styles.heroTagline}>
-            Empowering Visually Impaired Students in STEM
-          </p>
           <p className={styles.heroDescription}>
             A coding platform for visually impaired students. Our mission is to
             break down barriers and provide accessible resources, guidance, and

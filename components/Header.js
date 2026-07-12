@@ -54,10 +54,23 @@ export default function Header() {
       {/* Brand bar: title/logo, skip link, then theme toggle */}
       <div className={styles.brandbar}>
         <div className={styles.brandInner}>
-          <Link href="/" className={styles.logo} aria-label="A11Code - Home">
-            <span className={styles.logoIcon} aria-hidden="true">&#9881;</span>
+        <div className={styles.brand}>
+          <Link href="/" className={styles.logo}>
+            <span className={styles.logoMark} aria-hidden="true">
+              <svg viewBox="0 0 40 40" focusable="false" aria-hidden="true">
+                <rect x="1.5" y="1.5" width="37" height="37" rx="10" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="M13 14 L8 20 L13 26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M27 14 L32 20 L27 26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="20" cy="15" r="2.3" fill="currentColor" />
+                <path d="M15.5 19 H24.5 M20 19 V25 M20 25 L17.5 29 M20 25 L22.5 29" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
             <span className={styles.logoText}>A11Code</span>
           </Link>
+          <p className={styles.tagline}>
+            Empowering Visually Impaired Students in STEM
+          </p>
+        </div>
 
           <a href="#main-content" className="skip-nav">
             Skip to main content

@@ -41,26 +41,49 @@
   min-height: 3.25rem;
 }
 
-.logo {
+.brand {
   display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.logo {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
   color: #ffffff;
   font-weight: 700;
   font-size: 1.375rem;
+  align-self: flex-start;
 }
 
 .logo:hover {
   color: #e2e8f0;
 }
 
-.logoIcon {
-  font-size: 1.5rem;
+.logoMark {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.logoMark svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: block;
 }
 
 .logoText {
   letter-spacing: 0.02em;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #dbe4f0;
+  line-height: 1.3;
 }
 
 /* Mobile menu toggle */
