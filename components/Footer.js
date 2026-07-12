@@ -8,13 +8,6 @@ export default function Footer() {
     <footer className={styles.footer} role="contentinfo">
       <div className={styles.footerInner}>
         <div className={styles.footerGrid}>
-          <div className={styles.footerSection}>
-            <h2 className={styles.footerHeading}>A11Code</h2>
-            <p className={styles.footerTagline}>
-              Empowering Visually Impaired Students in STEM
-            </p>
-          </div>
-
           <nav className={styles.footerSection} aria-label="Footer navigation">
             <h2 className={styles.footerHeading}>Quick Links</h2>
             <ul className={styles.footerLinks} role="list">
