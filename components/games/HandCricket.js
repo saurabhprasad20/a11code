@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createCommentator, strings } from '../../data/handCricketCommentary';
+import sounds from './cricketSounds';
 import styles from './games.module.css';
 
 const RATE_OPTIONS = [
@@ -172,6 +173,15 @@ export default function HandCricket() {
     speak(text);
   }, [speak]);
 
+  // Sound effects share the commentary switch: if commentary is off, so are the
+  // sounds. There is intentionally no separate control. Each helper no-ops when
+  // Web Audio is unavailable.
+  const sfx = useCallback((name, ...args) => {
+    if (!speechOnRef.current) return;
+    const fn = sounds[name];
+    if (fn) fn(...args);
+  }, []);
+
   useEffect(() => {
     if (phase === 'batting' && turnHeadingRef.current) turnHeadingRef.current.focus();
     if (phase === 'result' && resultHeadingRef.current) resultHeadingRef.current.focus();
@@ -203,7 +213,15 @@ export default function HandCricket() {
     persist('hcLang', lang);
     setPhase('toss');
     const c = commentatorRef.current;
-    announce(`${c('matchStart')} ${S.tossTime}`);
+    const opener = `${c('matchStart')} ${S.tossTime}`;
+    // A welcome fanfare opens the match, then the commentary begins.
+    if (speechOnRef.current) {
+      sounds.unlock();
+      sounds.welcome();
+      window.setTimeout(() => announce(opener), 1150);
+    } else {
+      announce(opener);
+    }
   }
 
   function backToMenu() {
@@ -215,6 +233,7 @@ export default function HandCricket() {
   function callToss(call) {
     const coin = Math.floor(Math.random() * 2); // 0 heads, 1 tails
     const c = commentatorRef.current;
+    sfx('coin');
     if (call === coin) {
       setPhase('choice');
       announce(`${c('tossWin')} ${S.chooseBatBowl}`);
@@ -272,6 +291,7 @@ export default function HandCricket() {
     if (outcome !== 'tie' && margin > 0 && margin <= 3) line = `${line} ${c('closeFinish')}`;
     setCommentaryLine(line);
     setPhase('result');
+    sfx(outcome); // win / lose / tie closing sound
     announce(`${S.matchOverPrefix(finalUser, finalBot)} ${sentence} ${line} ${S.playAgainPrompt}`);
   }
 
@@ -294,6 +314,14 @@ export default function HandCricket() {
     setBotScore(newBot);
     setLastPlay({ userPick, botPick, out, runs, batterIsUser });
 
+    // Ball sound: the shot for runs (with a crowd roar on a boundary), or the
+    // clatter of stumps for a wicket. A terminal wicket in the chase is left to
+    // the closing stinger in finishMatch so the sounds do not collide.
+    if (!out) {
+      sfx('runTap', runs);
+      if (runs >= 4) sfx('boundary', runs);
+    }
+
     // Milestone: fifty
     let fiftyLine = '';
     if (!out && batterIsUser && userScore < 50 && newUser >= 50 && !userPassedFiftyRef.current) {
@@ -304,9 +332,11 @@ export default function HandCricket() {
       botPassedFiftyRef.current = true;
       fiftyLine = ` ${c('fifty')}`;
     }
+    if (fiftyLine) sfx('fifty');
 
     if (inning === 1) {
       if (out) {
+        sfx('wicket');
         const firstScore = batterIsUser ? newUser : newBot;
         const newTarget = firstScore + 1;
         setTarget(newTarget);
@@ -337,7 +367,7 @@ export default function HandCricket() {
     const need = target - chasingScore;
     const runLine = c(RUN_EVENTS[runs]);
     let pressure = '';
-    if (need <= 6) pressure = ` ${c('chasePressure')}`;
+    if (need <= 6) { pressure = ` ${c('chasePressure')}`; sfx('pressure'); }
     setCommentaryLine(runLine + fiftyLine);
     announce(`${runLine}${fiftyLine}${pressure} ${S.nextBall}`);
   }
@@ -386,8 +416,9 @@ export default function HandCricket() {
         <p className={styles.instructions}>
           Hand cricket, made for playing by ear. Win the toss, choose to bat or bowl, then on every
           ball you and the bot each pick a number from one to six. If your numbers match, the batter
-          is out. Otherwise the batter scores their number. A rich commentary track calls the action
-          aloud. First to defend or chase down the target wins.
+          is out. Otherwise the batter scores their number. A rich commentary track, woven with
+          live crowd sound, bat-on-ball taps and stumps rattling, calls the action aloud. First to
+          defend or chase down the target wins.
         </p>
         <p className={styles.recommend}>
           <strong>For the best experience</strong>, keep the commentary on and switch your screen
@@ -445,7 +476,7 @@ export default function HandCricket() {
                 checked={speechOn}
                 onChange={(e) => setSpeechOn(e.target.checked)}
               />
-              <span>Speak commentary aloud</span>
+              <span>Speak commentary and sound effects</span>
             </label>
 
             {supported && voices.length > 0 && (
