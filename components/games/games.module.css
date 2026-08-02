@@ -16,6 +16,15 @@
   margin-bottom: 1.5rem;
 }
 
+.recommend {
+  margin-bottom: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--color-primary-light);
+  background: var(--color-bg-alt);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  line-height: 1.7;
+}
+
 .status {
   min-height: 1.5rem;
   margin: 1rem 0;

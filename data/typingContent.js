@@ -18,8 +18,8 @@ export const typingLevels = {
     label: 'Medium',
     durationSeconds: 120,
     description:
-      'Two minutes. Short everyday phrases of about five to eight words are dictated.',
-    unit: 'phrase',
+      'Two minutes. Short everyday sentences of about five to eight words are dictated.',
+    unit: 'sentence',
   },
   hard: {
     id: 'hard',
@@ -31,84 +31,161 @@ export const typingLevels = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// Easy level: a broad bank of common, everyday words (no digits).
+// ---------------------------------------------------------------------------
 const easyWords = [
   'time', 'people', 'water', 'sound', 'place', 'music', 'light', 'story',
   'paper', 'friend', 'garden', 'window', 'letter', 'market', 'summer', 'winter',
-  'school', 'family', 'travel', 'coffee', 'morning', 'evening', 'picture', 'kitchen',
-  'journey', 'teacher', 'student', 'science', 'reason', 'answer', 'question', 'moment',
-  'bridge', 'forest', 'island', 'mountain', 'river', 'ocean', 'planet', 'flower',
-  'orange', 'yellow', 'purple', 'silver', 'golden', 'gentle', 'bright', 'quiet',
-  'happy', 'brave', 'clever', 'honest', 'simple', 'strong', 'careful', 'patient',
+  'spring', 'autumn', 'school', 'family', 'travel', 'coffee', 'morning', 'evening',
+  'picture', 'kitchen', 'journey', 'teacher', 'student', 'science', 'reason', 'answer',
+  'question', 'moment', 'bridge', 'forest', 'island', 'mountain', 'river', 'ocean',
+  'planet', 'flower', 'orange', 'yellow', 'purple', 'silver', 'golden', 'gentle',
+  'bright', 'quiet', 'happy', 'brave', 'clever', 'honest', 'simple', 'strong',
+  'careful', 'patient', 'kindness', 'courage', 'wisdom', 'freedom', 'balance', 'wonder',
+  'harvest', 'weather', 'thunder', 'rainbow', 'shadow', 'candle', 'mirror', 'basket',
+  'blanket', 'pillow', 'cushion', 'ladder', 'hammer', 'pencil', 'crayon', 'notebook',
+  'library', 'museum', 'theatre', 'concert', 'painting', 'drawing', 'melody', 'rhythm',
+  'guitar', 'violin', 'trumpet', 'whistle', 'engine', 'wheel', 'anchor', 'harbour',
+  'sailor', 'captain', 'farmer', 'baker', 'doctor', 'nurse', 'artist', 'writer',
+  'singer', 'dancer', 'painter', 'builder', 'driver', 'pilot', 'soldier', 'hunter',
+  'animal', 'rabbit', 'turtle', 'monkey', 'donkey', 'parrot', 'sparrow', 'eagle',
+  'dolphin', 'kitten', 'puppy', 'spider', 'butterfly', 'honeybee', 'ladybird', 'squirrel',
+  'apple', 'banana', 'cherry', 'lemon', 'mango', 'melon', 'peanut', 'walnut',
+  'carrot', 'potato', 'tomato', 'onion', 'ginger', 'pepper', 'butter', 'cheese',
+  'bread', 'honey', 'sugar', 'coconut', 'biscuit', 'pancake', 'noodle', 'pickle',
+  'blue', 'green', 'brown', 'black', 'white', 'grey', 'pink', 'cream',
+  'circle', 'square', 'triangle', 'diamond', 'pattern', 'texture', 'surface', 'corner',
+  'centre', 'border', 'ceiling', 'doorway', 'hallway', 'stairway', 'balcony', 'rooftop',
+  'pocket', 'button', 'zipper', 'collar', 'sleeve', 'jacket', 'sweater', 'sandal',
+  'umbrella', 'raincoat', 'scarf', 'glove', 'helmet', 'goggles', 'compass', 'lantern',
+  'whisper', 'giggle', 'laughter', 'promise', 'secret', 'memory', 'dream', 'idea',
+  'effort', 'purpose', 'progress', 'practice', 'lesson', 'chapter', 'sentence', 'meaning',
+  'value', 'measure', 'number', 'symbol', 'signal', 'message', 'reply', 'welcome',
+  'midday', 'sunset', 'sunrise', 'moonlight', 'starlight', 'daylight', 'twilight', 'horizon',
+  'meadow', 'valley', 'canyon', 'desert', 'jungle', 'glacier', 'volcano', 'waterfall',
+  'sturdy', 'graceful', 'curious', 'joyful', 'peaceful', 'thankful', 'hopeful', 'cheerful',
 ];
 
-const mediumPhrases = [
-  'the sun rose over the hills',
-  'she reads a book every night',
-  'we walked along the quiet beach',
-  'a warm cup of tea in winter',
-  'the children played in the park',
-  'birds were singing in the trees',
-  'he wrote a letter to his friend',
-  'the train arrived right on time',
-  'fresh bread from the corner bakery',
-  'they planted flowers in the garden',
+// ---------------------------------------------------------------------------
+// Sentence generator pools. Activities are location-neutral, past-tense verb
+// phrases so they read naturally after any subject and before any ending.
+// ---------------------------------------------------------------------------
+const subjects = [
+  'the teacher', 'the student', 'the young student', 'the old sailor',
+  'the kind doctor', 'the tired traveller', 'the curious child', 'the quiet writer',
+  'the cheerful painter', 'the gentle nurse', 'the busy farmer', 'the wise grandmother',
+  'the little boy', 'the little girl', 'my closest friend', 'my new neighbour',
+  'our music teacher', 'her younger brother', 'his older sister', 'the morning baker',
+  'the local gardener', 'the ship captain', 'the train driver', 'the night guard',
+  'the village elder', 'the honest merchant', 'the young poet', 'the patient tutor',
+];
+
+const activities = [
+  'worked quietly', 'smiled warmly', 'laughed softly', 'spoke gently',
+  'waited patiently', 'listened carefully', 'read an old book', 'told a funny story',
+  'told an old tale', 'wrote a long letter', 'sang a soft song', 'hummed a quiet tune',
+  'drew a small picture', 'packed a light bag', 'made a warm meal', 'baked some fresh bread',
+  'planted a few seeds', 'watered the young plants', 'folded the clean clothes',
+  'swept the wooden floor', 'watched the passing clouds', 'followed the winding path',
+  'opened an old journal', 'closed the heavy book', 'learned a new word',
+  'practised a short song', 'remembered a happy day', 'imagined a distant land',
+  'shared a warm smile', 'counted the falling leaves', 'traced a careful line',
+  'whispered a kind word', 'gathered the ripe fruit', 'lit a small candle',
+];
+
+const endings = [
+  'in the morning', 'in the evening', 'in the afternoon', 'before sunrise',
+  'before sunset', 'after lunch', 'after dinner', 'near the river',
+  'by the quiet sea', 'under the tall trees', 'beside the calm lake', 'along the narrow path',
+  'at the open window', 'in the small garden', 'on a cold day', 'on a warm evening',
+  'on a rainy afternoon', 'on a bright morning', 'without a single word', 'with a gentle smile',
+  'with a happy heart', 'for a little while', 'for a few quiet minutes', 'all through the day',
+  'in the soft lamplight', 'as the rain fell', 'as the day began', 'while the kettle boiled',
+];
+
+// A handful of hand-written sentences per level, mixed in for extra flavour.
+const curatedMedium = [
+  'the sun rose slowly over the hills',
+  'birds were singing in the tall trees',
+  'a warm cup of tea on a cold day',
+  'the children played in the open park',
+  'fresh bread came out of the oven',
   'the river flowed under the old bridge',
-  'a gentle breeze moved through the room',
-  'music filled the crowded hall',
-  'the teacher explained the lesson slowly',
-  'we shared a meal with our neighbours',
+  'music filled the crowded concert hall',
+  'we shared a quiet meal together',
   'the city lights shone in the distance',
-  'she painted the fence a bright blue',
-  'the dog ran across the open field',
   'rain tapped softly on the window',
-  'we watched the stars late at night',
-  'the market was busy on saturday morning',
-  'a kind word can change someone day',
-  'the mountain path was steep but calm',
-  'he learned to cook from his grandmother',
 ];
 
-const hardSentences = [
-  'the curious student asked a thoughtful question about the experiment',
+const curatedHard = [
+  'the curious student asked a thoughtful question about the difficult experiment',
   'a good story can carry a reader to places they have never seen',
   'patience and practice slowly turn a beginner into a confident writer',
-  'the engineers worked together to solve a difficult and stubborn problem',
-  'a quiet library is a wonderful place to think and learn new things',
-  'the gentle rain fell steadily across the wide and open valley',
-  'she believed that every person deserves a fair chance to succeed',
-  'the ancient bridge had carried travellers across the river for centuries',
+  'a quiet library is a wonderful place to think and to learn new things',
   'learning a new skill feels hard at first but becomes natural with time',
-  'the scientist recorded her results carefully before sharing them with others',
-  'a warm meal and a kind conversation can brighten the darkest evening',
-  'the young musician practised the same piece until it sounded effortless',
-  'curiosity is the spark that leads people toward remarkable discoveries',
-  'the team celebrated together after finishing the long and demanding project',
-  'a well written sentence can hold a great deal of meaning in few words',
-  'the farmer watched the clouds gather and hoped for a season of good rain',
-  'reading widely helps us understand people whose lives differ from our own',
-  'the old clock in the hallway had measured the quiet hours for generations',
-  'she explained the idea so clearly that everyone in the room understood it',
+  'a warm meal and a kind word can brighten the darkest winter evening',
+  'reading widely helps us understand people whose lives are different from our own',
   'small acts of kindness often matter far more than grand and costly gestures',
+  'the old bridge had carried travellers across the wide river for many centuries',
+  'she explained the idea so clearly that everyone in the room understood it at once',
 ];
 
-const banks = {
-  easy: easyWords,
-  medium: mediumPhrases,
-  hard: hardSentences,
-};
-
-// Returns a long shuffled queue for the level, repeating the bank if needed so
-// a fast typist never runs out during a five-minute test.
-export function buildQueue(levelId, minLength = 200) {
-  const source = banks[levelId] || banks.easy;
-  const queue = [];
-  while (queue.length < minLength) {
-    const shuffled = [...source];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    queue.push(...shuffled);
-  }
-  return queue;
+function pick(pool) {
+  return pool[Math.floor(Math.random() * pool.length)];
 }
+
+function makeMedium() {
+  // subject + activity: a natural five to eight word sentence.
+  return `${pick(subjects)} ${pick(activities)}`;
+}
+
+function makeHard() {
+  // subject + activity + ending: a longer, richer sentence.
+  return `${pick(subjects)} ${pick(activities)} ${pick(endings)}`;
+}
+
+function shuffle(list) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+// Builds a shuffled queue for the level, long enough that no test runs out.
+// Medium and hard queues are freshly generated each time from a very large
+// combinational space plus a few curated sentences, so tests stay fresh.
+export function buildQueue(levelId, minLength = 300) {
+  if (levelId === 'easy') {
+    const queue = [];
+    while (queue.length < minLength) queue.push(...shuffle(easyWords));
+    return queue;
+  }
+
+  const curated = levelId === 'hard' ? curatedHard : curatedMedium;
+  const make = levelId === 'hard' ? makeHard : makeMedium;
+
+  const seen = new Set();
+  const queue = [];
+  shuffle(curated).slice(0, 4).forEach((s) => {
+    if (!seen.has(s)) { seen.add(s); queue.push(s); }
+  });
+  let guard = 0;
+  while (queue.length < minLength && guard < minLength * 30) {
+    guard += 1;
+    const s = make();
+    if (seen.has(s)) continue;
+    seen.add(s);
+    queue.push(s);
+  }
+  return shuffle(queue);
+}
+
+// Exposed for insight/testing: the size of the generated sentence space.
+export const variety = {
+  easyWords: easyWords.length,
+  mediumCombinations: subjects.length * activities.length,
+  hardCombinations: subjects.length * activities.length * endings.length,
+};

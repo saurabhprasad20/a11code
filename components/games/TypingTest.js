@@ -259,6 +259,13 @@ export default function TypingTest() {
           what you hear, and press Enter to move on. Make sure your sound is on. Choose a level
           and your voice settings, then start.
         </p>
+        <p className={styles.recommend}>
+          <strong>For the best experience</strong>, we recommend temporarily pausing your
+          screen reader just before you press Start, so its voice does not talk over the
+          dictation. In NVDA, press the NVDA key plus S until you hear &ldquo;speech mode
+          off&rdquo;. In JAWS, press Insert plus Space, then S. Turn it back on the same way
+          once you finish the test.
+        </p>
 
         {!supported && (
           <p className={`${styles.status} ${styles.statusError}`} role="alert">
