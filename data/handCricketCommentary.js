@@ -308,16 +308,16 @@ const hi = {
     'गेंद हाथ से फिसली और पाँच रन निकल गए!',
   ],
   run6: [
-    'छक्का! गेंद गई सीधी बुर्ज खलीफा!',
-    'एयर होस्टेस को हैलो बोल के आई ये गेंद, छक्का!',
-    'ये छक्का नहीं, सीधी मिसाइल थी!',
+    'छह रन! गेंद गई सीधी बुर्ज खलीफा!',
+    'एयर होस्टेस को हैलो बोल के आई ये गेंद, पूरे छह रन!',
+    'ये कोई मामूली शॉट नहीं, सीधी मिसाइल थी, छह रन!',
     'इस गेंद की गुमशुदा तलाश केंद्र में रिपोर्ट लिखवा दो!',
-    'बल्ले ने कहा जा बेटा अंतरिक्ष घूम आ, छक्का!',
-    'छक्का! स्टेडियम के बाहर, दर्शक खड़े हो गए!',
-    'हवा में उड़ती हुई गेंद, सीधी छत के पार, छक्का!',
-    'गेंदबाज़ सिर पकड़ के बैठ गया, ज़बरदस्त छक्का!',
-    'बल्ले का पूरा जलवा, गेंद बादलों में, छह रन!',
-    'ये तो छक्कों की बरसात है, क्या टाइमिंग है!',
+    'बल्ले ने कहा जा बेटा अंतरिक्ष घूम आ, छह रन!',
+    'गेंद स्टेडियम के बाहर, दर्शक खड़े हो गए, छह रन!',
+    'हवा में उड़ती हुई गेंद, सीधी छत के पार, मैक्सिमम रन!',
+    'गेंदबाज़ सिर पकड़ के बैठ गया, ज़बरदस्त छह रन!',
+    'बल्ले का पूरा जलवा, गेंद बादलों में, पूरे छह रन!',
+    'ये तो रनों की बरसात है, एक ही शॉट में छह रन!',
   ],
   out: [
     'गया! सीधा पवेलियन की ओर!',
@@ -395,7 +395,7 @@ export const strings = {
     runWords: ['', 'One run', 'Two runs', 'Three runs', 'Four runs', 'Five runs', 'Six runs'],
     tossTime: 'Time for the toss. Press H for heads, or T for tails.',
     chooseBatBowl: 'Press B to bat first, or L to bowl first.',
-    firstBall: 'First ball! Play a number from one to six.',
+    firstBall: 'First ball! Play a number from one to six. Press M any time to hear the score.',
     nextBall: 'Next ball!',
     bowlFirst: 'You are bowling first.',
     choseBat: 'You chose to bat first.',
@@ -404,6 +404,19 @@ export const strings = {
     yourTotal: (t) => `Your total is ${t}.`,
     oppTotal: (t) => `Opponent total is ${t}.`,
     needToWin: (n) => `Need ${n} more to win.`,
+    scoreReport: ({ userScore, botScore, target, currentBatter }) => {
+      if (target == null) {
+        return currentBatter === 'user'
+          ? `You are batting and have scored ${userScore}.`
+          : `You are bowling. The opponent has scored ${botScore}.`;
+      }
+      if (currentBatter === 'user') {
+        const need = Math.max(target - userScore, 0);
+        return `Chasing ${target}. Your score is ${userScore}, you need ${need} more to win.`;
+      }
+      const need = Math.max(target - botScore, 0);
+      return `Defending ${target}. The opponent has ${botScore} and needs ${need} more.`;
+    },
     outDismissed: (s) => `Out! You are dismissed on ${s}.`,
     outBowled: (s) => `Out! You bowled them out on ${s}.`,
     targetIs: (t) => `The target is ${t}.`,
@@ -420,15 +433,15 @@ export const strings = {
     labelYourScore: 'Your score',
     labelOpponent: 'Opponent',
     labelTarget: 'Target',
-    tipKeys: 'Tip: press the number keys 1 to 6 to play without the mouse.',
+    tipKeys: 'Tip: press the number keys 1 to 6 to play, or M any time to hear the score.',
   },
   hi: {
     langLabel: 'हिन्दी',
     sep: '। ',
-    runWords: ['', 'एक रन', 'दो रन', 'तीन रन', 'चौका', 'पाँच रन', 'छक्का'],
+    runWords: ['', 'एक रन', 'दो रन', 'तीन रन', 'चौका', 'पाँच रन', 'छह रन'],
     tossTime: 'टॉस का समय। हेड्स के लिए एच, या टेल्स के लिए टी दबाइए।',
     chooseBatBowl: 'बल्लेबाज़ी के लिए बी, या गेंदबाज़ी के लिए एल दबाइए।',
-    firstBall: 'पहली गेंद! एक से छह तक कोई नंबर दबाइए।',
+    firstBall: 'पहली गेंद! एक से छह तक कोई नंबर दबाइए। स्कोर जानने के लिए कभी भी एम दबाइए।',
     nextBall: 'अगली गेंद!',
     bowlFirst: 'पहले आप गेंदबाज़ी करेंगे।',
     choseBat: 'आपने पहले बल्लेबाज़ी चुनी।',
@@ -437,6 +450,19 @@ export const strings = {
     yourTotal: (t) => `आपका स्कोर ${t}।`,
     oppTotal: (t) => `बॉट का स्कोर ${t}।`,
     needToWin: (n) => `जीत के लिए ${n} रन और चाहिए।`,
+    scoreReport: ({ userScore, botScore, target, currentBatter }) => {
+      if (target == null) {
+        return currentBatter === 'user'
+          ? `आप बल्लेबाज़ी कर रहे हैं, अब तक ${userScore} रन।`
+          : `आप गेंदबाज़ी कर रहे हैं, बॉट ने ${botScore} रन बनाए हैं।`;
+      }
+      if (currentBatter === 'user') {
+        const need = Math.max(target - userScore, 0);
+        return `लक्ष्य ${target}। आपके ${userScore} रन, जीत के लिए ${need} रन और चाहिए।`;
+      }
+      const need = Math.max(target - botScore, 0);
+      return `लक्ष्य ${target}। बॉट के ${botScore} रन, उसे ${need} रन और चाहिए।`;
+    },
     outDismissed: (s) => `आउट! आप ${s} रन पर आउट हो गए।`,
     outBowled: (s) => `आउट! आपने बॉट को ${s} रन पर आउट कर दिया।`,
     targetIs: (t) => `लक्ष्य है ${t}।`,
@@ -453,7 +479,7 @@ export const strings = {
     labelYourScore: 'आपका स्कोर',
     labelOpponent: 'बॉट',
     labelTarget: 'लक्ष्य',
-    tipKeys: 'सुझाव: बिना माउस के खेलने के लिए 1 से 6 तक की नंबर कुंजियाँ दबाइए।',
+    tipKeys: 'सुझाव: खेलने के लिए 1 से 6 तक नंबर कुंजियाँ, या स्कोर सुनने के लिए एम दबाइए।',
   },
 };
 

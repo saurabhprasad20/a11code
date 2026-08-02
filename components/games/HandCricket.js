@@ -317,11 +317,9 @@ export default function HandCricket() {
         setCommentaryLine(`${c('out')} ${c('inningsBreak')}`);
         announce(`${outText} ${S.targetIs(newTarget)} ${c('out')} ${c('inningsBreak')} ${nextRole} ${S.firstBall}`);
       } else {
-        const total = batterIsUser ? newUser : newBot;
-        const totalText = batterIsUser ? S.yourTotal(total) : S.oppTotal(total);
         const runLine = c(RUN_EVENTS[runs]);
         setCommentaryLine(runLine + fiftyLine);
-        announce(`${S.runWords[runs]}${batterIsUser ? '' : S.toOpponent}${S.sep}${totalText} ${runLine}${fiftyLine} ${S.nextBall}`);
+        announce(`${runLine}${fiftyLine} ${S.nextBall}`);
       }
       return;
     }
@@ -337,14 +335,15 @@ export default function HandCricket() {
       return;
     }
     const need = target - chasingScore;
-    const totalText = batterIsUser ? S.yourTotal(chasingScore) : S.oppTotal(chasingScore);
     const runLine = c(RUN_EVENTS[runs]);
     let pressure = '';
     if (need <= 6) pressure = ` ${c('chasePressure')}`;
     setCommentaryLine(runLine + fiftyLine);
-    announce(
-      `${S.runWords[runs]}${batterIsUser ? '' : S.toOpponent}${S.sep}${totalText} ${S.needToWin(need)}${pressure} ${runLine}${fiftyLine} ${S.nextBall}`
-    );
+    announce(`${runLine}${fiftyLine}${pressure} ${S.nextBall}`);
+  }
+
+  function reportScore() {
+    announce(S.scoreReport({ userScore, botScore, target, currentBatter }));
   }
 
   // Global number-key input during batting (keyboard + numpad), no navigation needed.
@@ -357,6 +356,7 @@ export default function HandCricket() {
       const k = e.key.toLowerCase();
       if (phase === 'batting') {
         if (e.key >= '1' && e.key <= '6') { e.preventDefault(); handlePick(parseInt(e.key, 10)); }
+        else if (k === 'm') { e.preventDefault(); reportScore(); }
       } else if (phase === 'toss') {
         if (k === 'h') { e.preventDefault(); callToss(0); }
         else if (k === 't') { e.preventDefault(); callToss(1); }
@@ -395,8 +395,9 @@ export default function HandCricket() {
           press the NVDA key plus S to pause speech; in JAWS press Insert plus Space, then S. You can
           play entirely from the keyboard: <strong>H</strong> for heads, <strong>T</strong> for
           tails, <strong>B</strong> to bat, <strong>L</strong> to bowl, the number keys{' '}
-          <strong>1 to 6</strong> to play each ball, and after the match <strong>S</strong> to start
-          again or <strong>Q</strong> to return to the menu.
+          <strong>1 to 6</strong> to play each ball, <strong>M</strong> any time to hear the score,
+          and after the match <strong>S</strong> to start again or <strong>Q</strong> to return to
+          the menu.
         </p>
         <p className={styles.meta}>
           Commentary is available in <strong>English</strong> and <strong>Hindi</strong>. Choose
@@ -552,6 +553,11 @@ export default function HandCricket() {
                 {n}
               </button>
             ))}
+          </div>
+          <div className={styles.controls}>
+            <button type="button" className="btn btn-outline" onClick={reportScore}>
+              Scoreboard (M)
+            </button>
           </div>
           <p className={styles.meta}>{S.tipKeys}</p>
         </div>
