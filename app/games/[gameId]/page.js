@@ -1,18 +1,10 @@
 import Link from 'next/link';
 import { games, getGame } from '../../../data/games';
-import NumberRiddle from '../../../components/games/NumberRiddle';
-import CodeQuiz from '../../../components/games/CodeQuiz';
-import TypingChampion from '../../../components/games/TypingChampion';
-import AudioMemory from '../../../components/games/AudioMemory';
-import StemExplorer from '../../../components/games/StemExplorer';
+import TypingTest from '../../../components/games/TypingTest';
 import styles from './page.module.css';
 
 const GAME_COMPONENTS = {
-  'number-riddle': NumberRiddle,
-  'code-quiz': CodeQuiz,
-  'typing-champion': TypingChampion,
-  'audio-memory': AudioMemory,
-  'stem-explorer': StemExplorer,
+  'typing-test': TypingTest,
 };
 
 export function generateStaticParams() {
