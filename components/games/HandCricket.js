@@ -172,7 +172,13 @@ export default function HandCricket() {
     persist('hcSpeech', speechOn ? 'on' : 'off');
     setPhase('toss');
     const c = commentatorRef.current;
-    announce(`${c('matchStart')} Call the toss. Choose heads or tails.`);
+    announce(`${c('matchStart')} Time for the toss. Press H for heads, or T for tails.`);
+  }
+
+  function backToMenu() {
+    if (synthRef.current) synthRef.current.cancel();
+    setPhase('setup');
+    setMessage('');
   }
 
   function callToss(call) {
@@ -180,14 +186,14 @@ export default function HandCricket() {
     const c = commentatorRef.current;
     if (call === coin) {
       setPhase('choice');
-      announce(`${c('tossWin')} Now choose to bat or to bowl.`);
+      announce(`${c('tossWin')} Press B to bat first, or L to bowl first.`);
     } else {
       // Bot won the toss and bats first.
       setBattingFirst('bot');
       setCurrentBatter('bot');
       setInning(1);
       setPhase('batting');
-      announce(`${c('tossLose')} You are bowling first. ${c('bowlingStart')}`);
+      announce(`${c('tossLose')} You are bowling first. ${c('bowlingStart')} Press a number key from 1 to 6 to bowl.`);
     }
   }
 
@@ -196,11 +202,11 @@ export default function HandCricket() {
     if (role === 'bat') {
       setBattingFirst('user');
       setCurrentBatter('user');
-      announce(`You chose to bat first. ${c('battingStart')}`);
+      announce(`You chose to bat first. ${c('battingStart')} Press a number key from 1 to 6 to play your shot.`);
     } else {
       setBattingFirst('bot');
       setCurrentBatter('bot');
-      announce(`You chose to bowl first. ${c('bowlingStart')}`);
+      announce(`You chose to bowl first. ${c('bowlingStart')} Press a number key from 1 to 6 to bowl.`);
     }
     setInning(1);
     setPhase('batting');
@@ -239,7 +245,7 @@ export default function HandCricket() {
     if (outcome !== 'tie' && margin > 0 && margin <= 3) line = `${line} ${c('closeFinish')}`;
     setCommentaryLine(line);
     setPhase('result');
-    announce(`Match over. Your total ${finalUser}, opponent ${finalBot}. ${sentence} ${line}`);
+    announce(`Match over. Your total ${finalUser}, opponent ${finalBot}. ${sentence} ${line} Press S to play again, or Q to return to the menu.`);
   }
 
   function handlePick(n) {
@@ -317,14 +323,24 @@ export default function HandCricket() {
   }
 
   // Global number-key input during batting (keyboard + numpad), no navigation needed.
+  // Keyboard commands per phase. Ignored while a form control is focused.
   useEffect(() => {
-    if (phase !== 'batting') return undefined;
     function onKey(e) {
       const tag = e.target.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-      if (e.key >= '1' && e.key <= '6') {
-        e.preventDefault();
-        handlePick(parseInt(e.key, 10));
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const k = e.key.toLowerCase();
+      if (phase === 'batting') {
+        if (e.key >= '1' && e.key <= '6') { e.preventDefault(); handlePick(parseInt(e.key, 10)); }
+      } else if (phase === 'toss') {
+        if (k === 'h') { e.preventDefault(); callToss(0); }
+        else if (k === 't') { e.preventDefault(); callToss(1); }
+      } else if (phase === 'choice') {
+        if (k === 'b') { e.preventDefault(); chooseRole('bat'); }
+        else if (k === 'l') { e.preventDefault(); chooseRole('bowl'); }
+      } else if (phase === 'result') {
+        if (k === 's') { e.preventDefault(); startMatch(); }
+        else if (k === 'q') { e.preventDefault(); backToMenu(); }
       }
     }
     window.addEventListener('keydown', onKey);
@@ -346,10 +362,13 @@ export default function HandCricket() {
           aloud. First to defend or chase down the target wins.
         </p>
         <p className={styles.recommend}>
-          <strong>For the best experience</strong>, either keep app commentary on and temporarily
-          pause your screen reader, or turn app commentary off and let your screen reader read the
-          match updates. In NVDA press the NVDA key plus S; in JAWS press Insert plus Space, then S.
-          You can play entirely with the number keys one to six.
+          <strong>For the best experience</strong>, keep the commentary on and switch your screen
+          reader to focus mode, or pause its speech, then simply follow the spoken commands. In NVDA
+          press the NVDA key plus S to pause speech; in JAWS press Insert plus Space, then S. You can
+          play entirely from the keyboard: <strong>H</strong> for heads, <strong>T</strong> for
+          tails, <strong>B</strong> to bat, <strong>L</strong> to bowl, the number keys{' '}
+          <strong>1 to 6</strong> to play each ball, and after the match <strong>S</strong> to start
+          again or <strong>Q</strong> to return to the menu.
         </p>
 
         {!supported && (
@@ -419,10 +438,10 @@ export default function HandCricket() {
         <p className={styles.politeLive} role="alert">{message}</p>
         <div className={styles.panel}>
           <h2 className={styles.blockHeadingTop}>The toss</h2>
-          <p>Call the coin. Choose heads or tails.</p>
+          <p>Call the coin. Press <strong>H</strong> for heads or <strong>T</strong> for tails, or use the buttons below.</p>
           <div className={styles.controls}>
-            <button type="button" className="btn btn-primary" onClick={() => callToss(0)}>Heads</button>
-            <button type="button" className="btn btn-primary" onClick={() => callToss(1)}>Tails</button>
+            <button type="button" className="btn btn-primary" onClick={() => callToss(0)}>Heads (H)</button>
+            <button type="button" className="btn btn-primary" onClick={() => callToss(1)}>Tails (T)</button>
           </div>
         </div>
       </div>
@@ -436,10 +455,10 @@ export default function HandCricket() {
         <p className={styles.politeLive} role="alert">{message}</p>
         <div className={styles.panel}>
           <h2 className={styles.blockHeadingTop}>You won the toss</h2>
-          <p>Will you bat or bowl first?</p>
+          <p>Will you bat or bowl first? Press <strong>B</strong> to bat or <strong>L</strong> to bowl.</p>
           <div className={styles.controls}>
-            <button type="button" className="btn btn-primary" onClick={() => chooseRole('bat')}>Bat first</button>
-            <button type="button" className="btn btn-primary" onClick={() => chooseRole('bowl')}>Bowl first</button>
+            <button type="button" className="btn btn-primary" onClick={() => chooseRole('bat')}>Bat first (B)</button>
+            <button type="button" className="btn btn-primary" onClick={() => chooseRole('bowl')}>Bowl first (L)</button>
           </div>
         </div>
       </div>
@@ -498,10 +517,11 @@ export default function HandCricket() {
           <div className={styles.metricRow}><dt>Opponent total</dt><dd>{result.botScore}</dd></div>
           <div className={styles.metricRow}><dt>Record</dt><dd>{stats.wins} won, {stats.losses} lost, {stats.ties} tied</dd></div>
         </dl>
+        <p className={styles.meta}>Press <strong>S</strong> to play again, or <strong>Q</strong> to return to the menu.</p>
         <div className={styles.controls}>
-          <button type="button" className="btn btn-primary" onClick={startMatch}>Play again</button>
-          <button type="button" className="btn btn-outline" onClick={() => { if (synthRef.current) synthRef.current.cancel(); setPhase('setup'); setMessage(''); }}>
-            Back to menu
+          <button type="button" className="btn btn-primary" onClick={startMatch}>Play again (S)</button>
+          <button type="button" className="btn btn-outline" onClick={backToMenu}>
+            Back to menu (Q)
           </button>
         </div>
       </div>
