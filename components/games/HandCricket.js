@@ -193,7 +193,7 @@ export default function HandCricket() {
       setCurrentBatter('bot');
       setInning(1);
       setPhase('batting');
-      announce(`${c('tossLose')} You are bowling first. ${c('bowlingStart')} Press a number key from 1 to 6 to bowl.`);
+      announce(`${c('tossLose')} You are bowling first. ${c('bowlingStart')} First ball! Play a number from one to six.`);
     }
   }
 
@@ -202,11 +202,11 @@ export default function HandCricket() {
     if (role === 'bat') {
       setBattingFirst('user');
       setCurrentBatter('user');
-      announce(`You chose to bat first. ${c('battingStart')} Press a number key from 1 to 6 to play your shot.`);
+      announce(`You chose to bat first. ${c('battingStart')} First ball! Play a number from one to six.`);
     } else {
       setBattingFirst('bot');
       setCurrentBatter('bot');
-      announce(`You chose to bowl first. ${c('bowlingStart')} Press a number key from 1 to 6 to bowl.`);
+      announce(`You chose to bowl first. ${c('bowlingStart')} First ball! Play a number from one to six.`);
     }
     setInning(1);
     setPhase('batting');
@@ -290,13 +290,13 @@ export default function HandCricket() {
           : `Out! You bowled them out on ${newBot}.`;
         const nextRole = batterIsUser ? c('bowlingStart') : c('battingStart');
         setCommentaryLine(`${c('out')} ${c('inningsBreak')}`);
-        announce(`${outText} The target is ${newTarget}. ${c('out')} ${c('inningsBreak')} ${nextRole}`);
+        announce(`${outText} The target is ${newTarget}. ${c('out')} ${c('inningsBreak')} ${nextRole} First ball!`);
       } else {
         const total = batterIsUser ? newUser : newBot;
         const totalText = batterIsUser ? `Your total is ${total}.` : `Opponent total is ${total}.`;
         const runLine = c(RUN_EVENTS[runs]);
         setCommentaryLine(runLine + fiftyLine);
-        announce(`${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} ${runLine}${fiftyLine}`);
+        announce(`${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} ${runLine}${fiftyLine} Next ball!`);
       }
       return;
     }
@@ -318,7 +318,7 @@ export default function HandCricket() {
     if (need <= 6) pressure = ` ${c('chasePressure')}`;
     setCommentaryLine(runLine + fiftyLine);
     announce(
-      `${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} Need ${need} more to win.${pressure} ${runLine}${fiftyLine}`
+      `${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} Need ${need} more to win.${pressure} ${runLine}${fiftyLine} Next ball!`
     );
   }
 
