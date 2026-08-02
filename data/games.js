@@ -7,6 +7,14 @@ export const games = [
     tagline: 'Type what you hear, against the clock',
     type: 'web',
   },
+  {
+    id: 'hand-cricket',
+    title: 'Hand Cricket',
+    description:
+      'The classic hand cricket game, reimagined to be played entirely by ear. Win the toss, choose to bat or bowl, and pick a number from one to six each ball against the bot. A lively commentary track calls every run, wicket, and milestone aloud, with your own choice of voice and speed. Keyboard-first, screen-reader-first, and it remembers your wins.',
+    tagline: 'Bat, bowl, and beat the bot with live commentary',
+    type: 'web',
+  },
 ];
 
 export function getGame(id) {

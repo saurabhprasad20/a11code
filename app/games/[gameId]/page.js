@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { games, getGame } from '../../../data/games';
 import TypingTest from '../../../components/games/TypingTest';
+import HandCricket from '../../../components/games/HandCricket';
 import styles from './page.module.css';
 
 const GAME_COMPONENTS = {
   'typing-test': TypingTest,
+  'hand-cricket': HandCricket,
 };
 
 export function generateStaticParams() {
