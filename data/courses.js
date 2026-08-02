@@ -836,562 +836,1114 @@ print("Outside the function:", a)
     ],
   },
   {
-    id: 'java-fundamentals',
-    title: 'Java Fundamentals',
+    id: 'html',
+    title: 'HTML: Structure of the Web',
     description:
-      'Explore Java programming with accessible, step-by-step lessons. Learn object-oriented programming, collections, and error handling.',
-    level: 'Beginner to Intermediate',
-    chapters: [
-      {
-        id: 'introduction',
-        title: 'Introduction to Java',
-        content: `Java is one of the most widely used programming languages in the world. It powers Android apps, enterprise software, web applications, and much more.
-
-Why Java?
-
-Java follows the principle of "write once, run anywhere." This means code written in Java can run on any device that has the Java Virtual Machine (JVM) installed. Java is strongly typed, object-oriented, and has a vast ecosystem of libraries and tools.
-
-Setting Up Java
-
-To start programming in Java, you need to install the Java Development Kit (JDK). Download it from the official Oracle website or use an open-source alternative like OpenJDK.
-
-After installation, verify it by opening your terminal and typing:
-
-java --version
-javac --version
-
-The first command checks the Java runtime, and the second checks the Java compiler.
-
-Your First Java Program
-
-Create a file named HelloWorld.java and type the following:
-
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-
-To compile and run this program, open your terminal and type:
-
-javac HelloWorld.java
-java HelloWorld
-
-Let us break down what each part means. The public class HelloWorld line defines a class named HelloWorld. Every Java program needs at least one class. The public static void main line defines the main method, which is the entry point of every Java program. System.out.println prints text to the console.
-
-Variables and Data Types
-
-Java requires you to declare the type of each variable:
-
-String name = "Saurabh";
-int age = 25;
-double height = 5.8;
-boolean isStudent = true;
-
-Unlike Python, you must specify the type before the variable name.
-
-Key Takeaways
-
-Java is a strongly typed, object-oriented language. It runs on the JVM, making it platform-independent. Every Java program has a main method as its entry point. Variables must have their types declared explicitly.`,
-      },
-      {
-        id: 'oop-basics',
-        title: 'Object-Oriented Programming Basics',
-        content: `Object-Oriented Programming (OOP) is the foundation of Java. It organizes code into objects that contain both data and behavior.
-
-Classes and Objects
-
-A class is a blueprint for creating objects. An object is an instance of a class:
-
-public class Student {
-    String name;
-    int age;
-
-    void introduce() {
-        System.out.println("Hi, I am " + name + " and I am " + age + " years old.");
-    }
-}
-
-To create and use an object:
-
-Student student1 = new Student();
-student1.name = "Saurabh";
-student1.age = 25;
-student1.introduce();
-
-Constructors
-
-A constructor is a special method that initializes an object when it is created:
-
-public class Student {
-    String name;
-    int age;
-
-    Student(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    void introduce() {
-        System.out.println("Hi, I am " + name + " and I am " + age + " years old.");
-    }
-}
-
-Student student1 = new Student("Saurabh", 25);
-student1.introduce();
-
-The this keyword refers to the current object, distinguishing the object's fields from the constructor's parameters.
-
-Encapsulation
-
-Encapsulation means hiding the internal details of an object and exposing only what is necessary:
-
-public class BankAccount {
-    private double balance;
-
-    public BankAccount(double initialBalance) {
-        this.balance = initialBalance;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void deposit(double amount) {
-        if (amount > 0) {
-            balance = balance + amount;
-        }
-    }
-
-    public void withdraw(double amount) {
-        if (amount > 0 && amount <= balance) {
-            balance = balance - amount;
-        }
-    }
-}
-
-The balance field is private, so it can only be accessed through the public methods.
-
-Inheritance
-
-Inheritance lets a class inherit fields and methods from another class:
-
-public class Animal {
-    String name;
-
-    void speak() {
-        System.out.println(name + " makes a sound.");
-    }
-}
-
-public class Dog extends Animal {
-    void speak() {
-        System.out.println(name + " barks.");
-    }
-}
-
-Dog dog = new Dog();
-dog.name = "Buddy";
-dog.speak();
-
-The Dog class inherits from Animal and overrides the speak method.
-
-Key Takeaways
-
-Classes are blueprints and objects are instances. Constructors initialize objects when they are created. Encapsulation protects data by making fields private and providing public methods. Inheritance allows classes to share and extend behavior.`,
-      },
-      {
-        id: 'collections',
-        title: 'Collections',
-        content: `Java provides a rich set of collection classes for storing and manipulating groups of objects.
-
-ArrayList
-
-An ArrayList is a resizable list that can grow and shrink as needed:
-
-import java.util.ArrayList;
-
-ArrayList<String> fruits = new ArrayList<>();
-fruits.add("Apple");
-fruits.add("Banana");
-fruits.add("Cherry");
-
-System.out.println(fruits.get(0));
-System.out.println("Size: " + fruits.size());
-
-You access elements by their index (starting from 0) using the get method.
-
-Iterating Over a List
-
-You can loop through an ArrayList using a for-each loop:
-
-for (String fruit : fruits) {
-    System.out.println(fruit);
-}
-
-Or using a traditional for loop with index:
-
-for (int i = 0; i < fruits.size(); i++) {
-    System.out.println(fruits.get(i));
-}
-
-Common ArrayList Operations
-
-Removing an element: fruits.remove("Banana") or fruits.remove(1)
-
-Checking if an element exists: fruits.contains("Apple") returns true or false
-
-Finding the index of an element: fruits.indexOf("Cherry") returns the position
-
-HashMap
-
-A HashMap stores key-value pairs:
-
-import java.util.HashMap;
-
-HashMap<String, Integer> scores = new HashMap<>();
-scores.put("Saurabh", 95);
-scores.put("Priya", 88);
-scores.put("Rahul", 92);
-
-System.out.println(scores.get("Saurabh"));
-
-Iterating Over a HashMap
-
-You can loop through keys, values, or both:
-
-for (String key : scores.keySet()) {
-    System.out.println(key + ": " + scores.get(key));
-}
-
-HashSet
-
-A HashSet stores unique elements with no duplicates:
-
-import java.util.HashSet;
-
-HashSet<String> uniqueNames = new HashSet<>();
-uniqueNames.add("Saurabh");
-uniqueNames.add("Priya");
-uniqueNames.add("Saurabh");
-
-System.out.println(uniqueNames.size());
-
-The size will be 2 because HashSet does not allow duplicates.
-
-Key Takeaways
-
-ArrayList is a resizable list for ordered collections. HashMap stores data as key-value pairs for quick lookup. HashSet stores unique elements without duplicates. The for-each loop is the most readable way to iterate over collections.`,
-      },
-      {
-        id: 'error-handling',
-        title: 'Error Handling',
-        content: `Errors are inevitable in programming. Java provides a structured way to handle them using try-catch blocks.
-
-What Are Exceptions?
-
-An exception is an event that disrupts the normal flow of a program. For example, dividing by zero or accessing an invalid array index.
-
-Without error handling, these situations crash your program. With error handling, you can respond gracefully.
-
-Try-Catch Blocks
-
-The try block contains code that might throw an exception. The catch block handles the exception:
-
-try {
-    int result = 10 / 0;
-    System.out.println(result);
-} catch (ArithmeticException e) {
-    System.out.println("Error: Cannot divide by zero.");
-}
-
-The program does not crash. Instead, it prints the error message and continues.
-
-Multiple Catch Blocks
-
-You can handle different types of exceptions separately:
-
-try {
-    int[] numbers = {1, 2, 3};
-    System.out.println(numbers[5]);
-} catch (ArrayIndexOutOfBoundsException e) {
-    System.out.println("Error: Index is out of bounds.");
-} catch (Exception e) {
-    System.out.println("An unexpected error occurred: " + e.getMessage());
-}
-
-Always catch more specific exceptions before general ones.
-
-Finally Block
-
-The finally block runs regardless of whether an exception occurred:
-
-try {
-    int result = 10 / 2;
-    System.out.println(result);
-} catch (ArithmeticException e) {
-    System.out.println("Error: " + e.getMessage());
-} finally {
-    System.out.println("This always runs.");
-}
-
-The finally block is commonly used to clean up resources like closing files or database connections.
-
-Throwing Exceptions
-
-You can throw your own exceptions:
-
-public static void checkAge(int age) {
-    if (age < 18) {
-        throw new IllegalArgumentException("Age must be 18 or older.");
-    }
-    System.out.println("Access granted.");
-}
-
-try {
-    checkAge(15);
-} catch (IllegalArgumentException e) {
-    System.out.println(e.getMessage());
-}
-
-Custom Exceptions
-
-You can create your own exception classes:
-
-public class InsufficientFundsException extends Exception {
-    public InsufficientFundsException(String message) {
-        super(message);
-    }
-}
-
-This lets you create meaningful exceptions specific to your application.
-
-Key Takeaways
-
-Exceptions disrupt normal program flow. Try-catch blocks let you handle errors gracefully. The finally block always executes for cleanup. You can throw and create custom exceptions for specific situations.`,
-      },
-    ],
-  },
-  {
-    id: 'web-accessibility-101',
-    title: 'Web Accessibility 101',
-    description:
-      'Understand the principles of web accessibility. Learn about semantic HTML, ARIA attributes, and how to test your websites for accessibility.',
+      'Build the skeleton of every web page. This hands-on course starts from your very first tag and works up to complete, semantic documents: headings and text, lists, links and images, tables, forms, and the semantic landmarks that make pages accessible. Written for screen-reader users, with every example ready to type and run.',
     level: 'Beginner',
     chapters: [
       {
         id: 'introduction',
-        title: 'Introduction to Web Accessibility',
-        content: `Web accessibility means designing websites and applications that everyone can use, including people with disabilities. This includes people who are blind, have low vision, are deaf, have motor disabilities, or have cognitive disabilities.
+        title: 'Introduction to HTML',
+        blocks: [
+          { type: 'text', text: `HTML stands for HyperText Markup Language. It is the basic building block of the web, the skeleton of every web page. "HyperText" means pages linked to one another, and a "markup language" uses tags and annotations to describe how content should be displayed. Your browser reads the HTML and renders the page you see.` },
+          { type: 'text', text: `HTML, CSS, and JavaScript together make a full web application: HTML provides the structure, CSS the styling, and JavaScript the behaviour. In this course we focus on the structure.` },
 
-Why Accessibility Matters
+          { type: 'heading', text: `Tags and elements` },
+          { type: 'text', text: `A tag is an annotation that tells the browser how to render a piece of content. Most elements have four parts: an opening tag, some content, a closing tag, and, taken together, the whole thing is called an element.` },
+          { type: 'code', code: `<p>This is my first step to web development</p>` },
+          { type: 'text', text: `Here <p> is the opening tag, </p> is the closing tag, the text between them is the content, and the entire line is a paragraph element. Some tags are self-closing (also called empty tags) and have no content, such as <br>, <img>, and <input>.` },
 
-Over one billion people worldwide have some form of disability. When websites are not accessible, these users are excluded from information, services, and opportunities that others take for granted.
+          { type: 'heading', text: `Your first page` },
+          { type: 'text', text: `Create a file named index.html, type the following, and open it in a browser:` },
+          { type: 'code', code: `<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Namaste Duniya</h1>
+    <p>This is my first step to web development</p>
+    <!-- This is a comment and the browser ignores it -->
+  </body>
+</html>` },
+          { type: 'text', text: `Anything written between <!-- and --> is a comment. The browser ignores comments, so you can use them to leave notes for yourself.` },
 
-Accessibility is also a legal requirement in many countries. Laws like the Americans with Disabilities Act (ADA) and the European Accessibility Act require digital content to be accessible.
+          { type: 'heading', text: `The structure of a document` },
+          { type: 'text', text: `The <!DOCTYPE html> line tells the browser that this is an HTML5 page. The <html> element contains just two children: the <head> and the <body>. The <body> holds the visible content of the page, while the <head> holds metadata, which is data about the page itself.` },
+          { type: 'text', text: `Metadata includes things like the character set, the page description and SEO keywords, the author's name, the page title, and the viewport settings. The viewport is the visible area of the page; a typical setting is content="width=device-width, initial-scale=1.0". A more complete starting template looks like this:` },
+          { type: 'code', code: `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page Title</title>
+  </head>
+  <body>
+    <p>This is a paragraph</p>
+  </body>
+</html>` },
 
-The WCAG Guidelines
+          { type: 'heading', text: `Block and inline elements` },
+          { type: 'text', text: `There are two broad kinds of elements. Block elements are used to lay out chunks of content and each starts on a new line: headings, paragraphs, lists, articles, and sections. Inline elements sit within a line of content and are used to highlight part of it: emphasis, strong, and links are inline.` },
 
-The Web Content Accessibility Guidelines (WCAG) are the international standard for web accessibility. They are organized around four principles, known by the acronym POUR:
+          { type: 'heading', text: `Attributes` },
+          { type: 'text', text: `Attributes are properties of elements, written inside the opening tag. Almost every HTML tag can take attributes. For example, the lang attribute on the <html> element states the page language, which screen readers use to choose the right pronunciation:` },
+          { type: 'code', code: `<html lang="en">` },
+        ],
+      },
+      {
+        id: 'text-and-lists',
+        title: 'Text, Formatting, and Lists',
+        blocks: [
+          { type: 'heading', text: `Headings and paragraphs` },
+          { type: 'text', text: `HTML gives you six levels of heading, from <h1> (the most important) down to <h6> (the least). A page should have exactly one <h1>, and heading levels should not skip, so that the document has a clear outline. Paragraphs go in <p> elements.` },
+          { type: 'code', code: `<h1>heading 1</h1>
+<h2>heading 2</h2>
+<h3>heading 3</h3>
+<p>This is a paragraph</p>` },
 
-Perceivable: Information must be presentable in ways that all users can perceive. This means providing text alternatives for images, captions for videos, and ensuring content can be presented in different ways.
+          { type: 'heading', text: `Line breaks, rules, and preformatted text` },
+          { type: 'text', text: `<br> inserts a line break, and <hr> draws a horizontal rule between sections. Both are self-closing. The <pre> element preserves the exact spacing and line breaks you type, which is handy for laying out text or code.` },
+          { type: 'code', code: `<p>Good guy <br> is Amit</p>
+<hr>
+<pre>
+    Yaar tera
+    super star
+</pre>` },
 
-Operable: Users must be able to interact with all interface elements. This means everything must work with a keyboard, users have enough time to read content, and navigation is consistent.
+          { type: 'heading', text: `Formatting text` },
+          { type: 'text', text: `Several inline elements change how text looks or reads. Use them to mark meaning, not just appearance.` },
+          { type: 'code', code: `<b>this is bold</b>
+<i>this is italic</i>
+<small>this is small</small>
+<del>this is deleted</del>
+<mark>this is marked (highlighted)</mark>
+<u>this is underlined</u>` },
+          { type: 'text', text: `The <sup> element raises text (a superscript) and <sub> lowers it (a subscript). They are perfect for mathematics and chemistry:` },
+          { type: 'code', code: `(a+b)<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup> + 2ab
+H<sub>2</sub>O` },
 
-Understandable: Information and interface operation must be understandable. This means text is readable, pages behave predictably, and users get help avoiding and correcting errors.
+          { type: 'heading', text: `Unordered and ordered lists` },
+          { type: 'text', text: `An unordered list, <ul>, shows a bulleted set of items where order does not matter. An ordered list, <ol>, numbers its items. Each item goes in an <li> element.` },
+          { type: 'code', code: `<h2>Food items</h2>
+<ul>
+  <li>Aloo</li>
+  <li>Tamatar</li>
+  <li>Namak</li>
+</ul>
 
-Robust: Content must be robust enough to be interpreted by a wide variety of user agents, including assistive technologies like screen readers.
+<h2>Favourite cuisines</h2>
+<ol>
+  <li>Tofu</li>
+  <li>Tako</li>
+  <li>Pizza</li>
+</ol>` },
 
-Assistive Technologies
+          { type: 'heading', text: `Description lists` },
+          { type: 'text', text: `A description list, <dl>, pairs terms with their descriptions. Each term goes in a <dt> element and its description in a <dd> element. It is ideal for glossaries and name-value pairs.` },
+          { type: 'code', code: `<dl>
+  <dt>Tofu</dt>
+  <dd>A soft food made from soya beans.</dd>
+  <dt>HTML</dt>
+  <dd>The markup language used to structure web pages.</dd>
+</dl>` },
+        ],
+      },
+      {
+        id: 'links-images-media',
+        title: 'Links, Images, and Media',
+        blocks: [
+          { type: 'heading', text: `The anchor element` },
+          { type: 'text', text: `Links are what make the web a web. You create one with the anchor element, <a>, and its href attribute holds the destination. The text between the tags is what the reader activates.` },
+          { type: 'code', code: `<a href="https://codingaccess.web.app">Know more</a>` },
+          { type: 'text', text: `By default a link opens in the same tab. Add target="_blank" to open it in a new tab. When you do, it is good practice to tell the reader, because a new tab can be disorienting for screen-reader users.` },
+          { type: 'code', code: `<a href="https://codingaccess.web.app" target="_blank">
+  Know more <em>(opens in a new tab)</em>
+</a>` },
 
-People with disabilities use various tools to access the web:
+          { type: 'heading', text: `Different kinds of links` },
+          { type: 'text', text: `The href attribute can do more than point to another page. It can start a phone call, open the user's email app, or jump to a section within the same page.` },
+          { type: 'code', code: `<a href="tel:+918979515501">Call me</a>
+<a href="mailto:saurabhprasad20@gmail.com">Mail us</a>
+<a href="#resources">Jump to resources</a>` },
+          { type: 'text', text: `A link that starts with a # points to an element on the same page that has a matching id attribute, for example a section with id="resources".` },
 
-Screen readers read the content of a webpage aloud. Popular screen readers include JAWS, NVDA (free), and VoiceOver (built into macOS and iOS).
+          { type: 'heading', text: `Images` },
+          { type: 'text', text: `The <img> element embeds an image. It is self-closing. The src attribute gives the file or URL, and the alt attribute gives a text description. The alt text is essential: screen readers read it aloud, and it appears if the image fails to load. Give every meaningful image an accurate alt description.` },
+          { type: 'code', code: `<img src="paneer.jpg" alt="A bowl of shahi paneer" width="120" height="120">` },
 
-Screen magnifiers enlarge portions of the screen for people with low vision.
+          { type: 'heading', text: `Figures and captions` },
+          { type: 'text', text: `When an image needs a caption, wrap it in a <figure> element and add a <figcaption>. This ties the caption to the image in a way assistive technology understands.` },
+          { type: 'code', code: `<figure>
+  <img src="linus.jpeg" alt="A photograph of Linus Torvalds">
+  <figcaption>Linus Torvalds, creator of Linux.</figcaption>
+</figure>` },
 
-Alternative keyboards and switch devices allow people with motor disabilities to navigate without a standard mouse or keyboard.
+          { type: 'heading', text: `Favicons` },
+          { type: 'text', text: `A favicon is the small icon shown in the browser tab. You add it in the <head> with a <link> element.` },
+          { type: 'code', code: `<link rel="icon" type="image/x-icon" href="favicon.svg">` },
+        ],
+      },
+      {
+        id: 'tables-and-forms',
+        title: 'Tables and Forms',
+        blocks: [
+          { type: 'heading', text: `Building a table` },
+          { type: 'text', text: `A table presents data in rows and columns. The <table> element wraps everything. Inside it, <tr> defines a row, <th> a header cell, and <td> a data cell. Group the parts with <thead>, <tbody>, and <tfoot>, and describe the whole table with a <caption>. This structure lets screen-reader users understand which header a cell belongs to.` },
+          { type: 'code', code: `<table>
+  <caption>Grade Sheet</caption>
+  <thead>
+    <tr>
+      <th scope="col">Subject</th>
+      <th scope="col">Marks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>English</td>
+      <td>91</td>
+    </tr>
+    <tr>
+      <td>Maths</td>
+      <td>98</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Grade</td>
+      <td>A</td>
+    </tr>
+  </tfoot>
+</table>` },
+          { type: 'text', text: `The scope attribute on a header cell tells assistive technology whether the header applies to a column (scope="col") or a row (scope="row"). To make a cell stretch across several columns or rows, use the colspan and rowspan attributes.` },
 
-Voice recognition software lets people control their computer and dictate text using their voice.
+          { type: 'heading', text: `Forms` },
+          { type: 'text', text: `A form collects input from the user. The <form> element wraps the controls, and its action attribute says where the data should be sent when the form is submitted.` },
+          { type: 'code', code: `<form action="https://codingaccess.web.app">
+  <label for="username">User Name</label>
+  <input type="text" id="username">
 
-Key Takeaways
+  <label for="password">Password</label>
+  <input type="password" id="password">
 
-Accessibility ensures everyone can use the web, regardless of ability. WCAG provides the standard framework with four principles: Perceivable, Operable, Understandable, and Robust. Assistive technologies bridge the gap between users and digital content. Accessibility benefits everyone, not just people with disabilities.`,
+  <input type="submit" value="Submit">
+</form>` },
+
+          { type: 'heading', text: `Labels make forms accessible` },
+          { type: 'text', text: `Every input should have a <label>. The label's for attribute must match the input's id. This link means that when a screen-reader user reaches the field, the label is announced, and clicking the label moves focus to the field. A form without labels is very hard to use without sight.` },
+
+          { type: 'heading', text: `Common input types` },
+          { type: 'list', items: [
+            `type="text" for a single line of text.`,
+            `type="password" to hide the characters as they are typed.`,
+            `type="email" for an email address, with basic validation.`,
+            `type="number" for numeric input.`,
+            `type="checkbox" and type="radio" for choices.`,
+            `type="submit" for the button that sends the form.`,
+          ] },
+        ],
       },
       {
         id: 'semantic-html',
         title: 'Semantic HTML',
-        content: `Semantic HTML uses elements that clearly describe their meaning to both the browser and assistive technologies. It is the foundation of web accessibility.
+        blocks: [
+          { type: 'text', text: `Semantic HTML means choosing elements that describe the meaning of their content, not just its appearance. A <div> is a generic box with no meaning, but a <nav> clearly marks navigation. Semantic elements give the page a structure that browsers, search engines, and especially screen readers can understand.` },
 
-Why Semantic HTML Matters
+          { type: 'heading', text: `The landmark elements` },
+          { type: 'list', items: [
+            `<header> holds the top of the page or a section: a title, logo, or intro.`,
+            `<nav> wraps a set of navigation links.`,
+            `<main> contains the primary content, and there should be only one per page.`,
+            `<section> groups related content, usually with its own heading.`,
+            `<article> is a self-contained piece, like a blog post or news item.`,
+            `<aside> holds related but secondary content, like a sidebar.`,
+            `<footer> holds the bottom of the page or section: copyright, secondary links.`,
+          ] },
+          { type: 'text', text: `Screen-reader users can jump directly between these landmarks, so using them well makes a page far quicker to navigate.` },
 
-Screen readers rely on HTML structure to understand and present content to users. When you use semantic elements, screen readers can announce what type of content they are reading, allow users to navigate by headings, skip to the main content, and understand the relationships between elements.
+          { type: 'heading', text: `A semantic page in practice` },
+          { type: 'text', text: `Here is the shape of a well-structured page. Notice how the meaning is clear even before you add any styling.` },
+          { type: 'code', code: `<body>
+  <header>
+    <h1>Linus Torvalds</h1>
+    <p>The creator of Linux</p>
+  </header>
 
-Document Structure
+  <main>
+    <nav>
+      <a href="#bio">Biography</a>
+      <a href="#achievements">Achievements</a>
+    </nav>
 
-Every page should have a clear structure using landmark elements:
+    <section>
+      <h2 id="bio">Biography</h2>
+      <p>Linus Torvalds created the Linux kernel and the Git version-control system.</p>
+    </section>
 
-The header element contains the site title, logo, and main navigation. The nav element wraps navigation links. The main element contains the primary content of the page. The aside element contains supplementary content like sidebars. The footer element contains copyright information and secondary links.
+    <aside>
+      <figure>
+        <img src="linus.jpeg" alt="A photograph of Linus Torvalds">
+        <figcaption>Linus Torvalds</figcaption>
+      </figure>
+    </aside>
+  </main>
 
-These landmarks allow screen reader users to jump directly to different sections of the page.
+  <footer>
+    <p>&copy; Coding Access</p>
+  </footer>
+</body>` },
 
-Headings
+          { type: 'heading', text: `Quotes and citations` },
+          { type: 'text', text: `For a longer quotation, use <blockquote>, and name the source with <cite>. This is more meaningful than simply indenting text with CSS.` },
+          { type: 'code', code: `<blockquote cite="https://example.com">
+  <p>One of the most influential people in the world.</p>
+  <cite>Time Magazine</cite>
+</blockquote>` },
 
-Headings create an outline of your page. They must follow a logical hierarchy:
+          { type: 'heading', text: `Why it matters` },
+          { type: 'text', text: `A page built from <div> elements alone may look fine, but it is a wall of undifferentiated boxes to a screen reader. The same page built with header, nav, main, section, and footer becomes a set of clear landmarks with a logical heading outline. Semantic HTML is the foundation of an accessible web.` },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'css',
+    title: 'CSS: Styling the Web',
+    description:
+      'Turn plain HTML into a designed page. This course covers CSS from the ground up: how to attach styles, how selectors and specificity decide what wins, the box model, colors and units, gradients and shadows, positioning and transforms, and the two great layout systems, Flexbox and Grid, finishing with responsive design. Every concept comes with a small example you can try.',
+    level: 'Beginner to Intermediate',
+    chapters: [
+      {
+        id: 'fundamentals',
+        title: 'CSS Fundamentals and Selectors',
+        blocks: [
+          { type: 'text', text: `CSS stands for Cascading Style Sheets. Where HTML gives a page its structure, CSS gives it appearance: colours, spacing, fonts, and layout. A CSS rule has two parts, a selector that picks which elements to style, and a block of declarations that say how to style them.` },
+          { type: 'code', code: `h1 {
+  color: blue;
+  font-size: 2rem;
+}` },
+          { type: 'text', text: `Here h1 is the selector, and each line inside the braces is a declaration made of a property (color) and a value (blue).` },
 
-h1 is the page title. There should be only one h1 per page.
-h2 elements are major sections.
-h3 elements are subsections within h2 sections.
+          { type: 'heading', text: `Three ways to apply CSS` },
+          { type: 'text', text: `There are three ways to attach CSS to a page. Inline CSS uses the style attribute directly on an element. Internal CSS goes in a <style> block inside the <head>. External CSS lives in a separate .css file that you link to. External CSS is the best choice for real projects, because one stylesheet can style your whole site.` },
+          { type: 'code', code: `<!-- inline -->
+<h3 style="color: brown;">Inline styling</h3>
 
-Never skip heading levels. Do not jump from h1 to h3 without an h2 in between.
+<!-- internal: inside <head> -->
+<style>
+  h3 { color: violet; }
+</style>
 
-Screen reader users often navigate by headings, so a well-structured heading hierarchy is critical.
+<!-- external: link a separate file -->
+<link rel="stylesheet" href="styles.css">` },
 
-Lists
+          { type: 'heading', text: `The three basic selectors` },
+          { type: 'text', text: `The element selector targets every element of a given type. The class selector, written with a dot, targets every element that has that class. The id selector, written with a hash, targets the single element with that id. Remember: a class can be shared by many elements, but an id must be unique on the page.` },
+          { type: 'code', code: `/* element selector: every paragraph */
+p { color: yellow; }
 
-Use list elements for groups of related items:
+/* class selector: any element with class="largered" */
+.largered { color: red; font-size: large; }
 
-Unordered lists (ul with li elements) for items with no specific order.
-Ordered lists (ol with li elements) for sequential items.
-Description lists (dl with dt and dd elements) for term-definition pairs.
+/* id selector: the one element with id="tb" */
+#tb { color: green; }` },
 
-Screen readers announce the number of items in a list, helping users understand the content structure.
+          { type: 'heading', text: `Pseudo-classes` },
+          { type: 'text', text: `A pseudo-class is a keyword that styles an element in a particular state. The :hover pseudo-class, for example, applies while the pointer is over an element.` },
+          { type: 'code', code: `button:hover {
+  color: black;
+  font-size: large;
+}
+a:hover {
+  color: yellowgreen;
+}` },
 
-Links and Buttons
+          { type: 'heading', text: `Grouping and the universal selector` },
+          { type: 'text', text: `To give several selectors the same styles, list them separated by commas. The universal selector, *, matches every element and is often used to reset default spacing.` },
+          { type: 'code', code: `/* grouping */
+table, tr, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
 
-Links (a elements) navigate to another page or location.
-Buttons (button elements) perform an action on the current page.
-
-Never use a div or span as a clickable element. These are not keyboard accessible and are not announced correctly by screen readers.
-
-Link text should be descriptive. Avoid generic text like "click here" or "read more." Instead, write "Read our Python course overview" so users know where the link goes without needing surrounding context.
-
-Tables
-
-Tables should only be used for tabular data, never for layout. A well-structured table includes:
-
-A caption element describing the table.
-The th element for header cells with a scope attribute indicating whether they are row or column headers.
-The td element for data cells.
-
-Forms
-
-Form fields need labels. Every input must have an associated label element:
-
-The label element is linked to its input using the for attribute matching the input's id.
-
-Group related form fields using the fieldset element with a legend.
-
-Key Takeaways
-
-Semantic HTML provides structure that assistive technologies rely on. Use landmark elements to define page regions. Maintain a logical heading hierarchy. Use appropriate elements for their intended purpose. Link text must be descriptive and form fields must have labels.`,
+/* universal selector */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}` },
+        ],
       },
       {
-        id: 'aria-attributes',
-        title: 'ARIA Attributes',
-        content: `ARIA stands for Accessible Rich Internet Applications. It is a set of attributes that enhance HTML to make dynamic web content more accessible.
+        id: 'specificity-colors-units',
+        title: 'Specificity, Colors, and Units',
+        blocks: [
+          { type: 'heading', text: `Specificity: which rule wins?` },
+          { type: 'text', text: `When several rules target the same element, which one wins? CSS decides using specificity. From lowest to highest priority: the element selector is weakest, then the class selector, then the id selector, and an inline style attribute is strongest of all. If two rules have equal specificity, the one written later wins.` },
+          { type: 'code', code: `h1 { color: red; }        /* weakest */
+.classh1 { color: green; }
+#idh1 { color: yellow; }
 
-The First Rule of ARIA
+<!-- inline style beats all of the above -->
+<h1 style="color: blue;" id="idh1" class="classh1">Hello</h1>` },
+          { type: 'text', text: `In that example the heading ends up blue, because the inline style has the highest specificity.` },
 
-Do not use ARIA if a native HTML element can achieve the same result. For example, use a button element instead of adding role="button" to a div. Native elements have built-in keyboard handling and screen reader support.
+          { type: 'heading', text: `Colors` },
+          { type: 'text', text: `There are three common ways to write a colour in CSS. Hexadecimal uses a hash followed by six hex digits (0 to f). The rgb() function takes three values from 0 to 255 for red, green, and blue. And CSS has about 140 predefined colour names.` },
+          { type: 'code', code: `/* hexadecimal */
+color: #ffffff;   /* white */
+color: #ff0000;   /* red */
 
-ARIA should supplement HTML, not replace it.
+/* rgb function */
+color: rgb(255, 255, 255);   /* white */
+color: rgb(0, 0, 255);       /* blue */
 
-Common ARIA Roles
+/* predefined names */
+color: red;
+color: rebeccapurple;` },
+          { type: 'text', text: `The rgba() function adds a fourth value, the alpha, for transparency. 0 is fully transparent and 1 is fully opaque.` },
+          { type: 'code', code: `background-color: rgba(186, 170, 28, 0.25);` },
 
-Roles define what an element is. Some common roles:
-
-role="navigation" identifies a navigation region (though using the nav element is preferred).
-role="alert" announces important messages to screen readers immediately.
-role="dialog" identifies a dialog or modal window.
-role="tab", role="tabpanel", and role="tablist" create accessible tab interfaces.
-
-ARIA States and Properties
-
-aria-label provides an accessible name when visible text is not available. For example, a search button that only shows an icon needs an aria-label="Search" attribute.
-
-aria-labelledby points to another element that provides the label. This is useful when the label text already exists on the page.
-
-aria-describedby links an element to a longer description.
-
-aria-expanded indicates whether a collapsible section is open (true) or closed (false). This is important for dropdown menus and accordions.
-
-aria-hidden="true" hides an element from screen readers. Use this for decorative elements that add no information.
-
-aria-live regions announce dynamic content changes. Use aria-live="polite" for non-urgent updates and aria-live="assertive" for critical alerts.
-
-aria-current="page" indicates the current page in a navigation menu.
-
-Building an Accessible Dropdown Menu
-
-Here is how ARIA attributes work together in a dropdown:
-
-The trigger button has aria-expanded="false" initially. When opened, it changes to aria-expanded="true". The button also has aria-haspopup="true" to indicate it opens a menu. The dropdown container has role="menu" and each item has role="menuitem".
-
-Building an Accessible Accordion
-
-For an accordion, each trigger button has aria-expanded to indicate its state and aria-controls pointing to the content panel it controls. The content panel has role="region" and aria-labelledby pointing back to the trigger.
-
-Common Mistakes
-
-Adding ARIA to elements that already have native semantics. For example, adding role="button" to a button element is redundant.
-
-Using aria-label on elements that already have visible text. This can create confusion for screen reader users.
-
-Forgetting to update aria-expanded when toggling interactive elements.
-
-Key Takeaways
-
-Use native HTML elements before reaching for ARIA. ARIA roles define what an element is. ARIA states like aria-expanded communicate dynamic changes. ARIA labels provide accessible names for elements without visible text. Always keep ARIA states synchronized with the visual state.`,
+          { type: 'heading', text: `Units` },
+          { type: 'text', text: `The px unit is an absolute unit; one pixel is 1/96 of an inch, and it behaves the same on every device. Percentages are relative to the parent element. The em unit is relative to the font size of the parent, while rem is relative to the font size of the root (the <html> element).` },
+          { type: 'code', code: `.parent { font-size: 18px; }
+.child  { font-size: 2em; }   /* 2 x 18px = 36px */
+.any    { font-size: 3rem; }  /* 3 x the root font size */` },
+          { type: 'text', text: `The viewport units are relative to the visible area of the screen: vw is 1/100 of the viewport width and vh is 1/100 of the viewport height. They are useful for elements that should scale with the window.` },
+          { type: 'code', code: `#hero {
+  width: 50vw;    /* half the viewport width */
+  height: 50vh;   /* half the viewport height */
+}` },
+        ],
       },
       {
-        id: 'testing-tools',
-        title: 'Testing for Accessibility',
-        content: `Testing is essential to ensure your website is truly accessible. No single tool catches every issue, so use a combination of automated and manual testing.
+        id: 'box-model',
+        title: 'The Box Model',
+        blocks: [
+          { type: 'text', text: `Every element on a page is a rectangular box. The box model describes the layers of that box, from the inside out: the content, then the padding, then the border, then the margin.` },
+          { type: 'list', items: [
+            `content is the text, image, or other content itself, sized by width and height.`,
+            `padding is the space between the content and the border.`,
+            `border is the line that encloses the padding and content.`,
+            `margin is the space outside the border, separating this box from its neighbours.`,
+          ] },
 
-Automated Testing Tools
+          { type: 'heading', text: `Setting the layers` },
+          { type: 'text', text: `By default, padding and margin apply to all four sides, but you can set each side on its own with properties like margin-top and padding-left.` },
+          { type: 'code', code: `.box {
+  width: 200px;
+  height: 100px;
+  border: 5px solid black;
+  padding: 25px;
+  margin: 10px;
+}` },
 
-Automated tools can quickly identify many common accessibility issues:
+          { type: 'heading', text: `box-sizing` },
+          { type: 'text', text: `By default, width and height set the size of the content only, so padding and border are added on top, making the box larger than you might expect. Setting box-sizing: border-box makes width and height include the padding and border, which is far easier to reason about. Many developers apply it to every element.` },
+          { type: 'code', code: `* {
+  box-sizing: border-box;
+}` },
 
-axe DevTools is a browser extension that scans your page and reports accessibility violations. It categorizes issues by severity and provides clear descriptions and fix suggestions.
+          { type: 'heading', text: `Overflow` },
+          { type: 'text', text: `When content is too big for its box, the overflow property decides what happens. visible (the default) lets it spill out, hidden clips it, and scroll adds scrollbars so the content can be scrolled within the box.` },
+          { type: 'code', code: `.panel {
+  max-width: 200px;
+  max-height: 200px;
+  overflow: scroll;
+}` },
 
-Lighthouse is built into Google Chrome DevTools. It includes an accessibility audit that scores your page and highlights issues. Access it through the Chrome DevTools Audits panel.
+          { type: 'heading', text: `Minimum and maximum sizes` },
+          { type: 'text', text: `You can constrain a box with min-width, max-width, min-height, and max-height. These are especially useful for responsive layouts, where you want an element to grow or shrink but only within limits.` },
+          { type: 'code', code: `.card {
+  min-width: 20px;
+  max-width: 200px;
+}` },
+        ],
+      },
+      {
+        id: 'gradients-and-shadows',
+        title: 'Backgrounds, Gradients, and Shadows',
+        blocks: [
+          { type: 'heading', text: `Linear gradients` },
+          { type: 'text', text: `A gradient is a smooth blend between colours, set as a background image. A linear gradient runs in a straight line. By default it goes from top to bottom, but you can give it a direction or an angle. Zero degrees points up, 90 degrees points right, 180 degrees points down.` },
+          { type: 'code', code: `background-image: linear-gradient(red, blue);            /* top to bottom */
+background-image: linear-gradient(to right, red, blue);
+background-image: linear-gradient(180deg, red, yellow);
 
-WAVE (Web Accessibility Evaluation Tool) is a browser extension that adds visual indicators to your page showing accessibility issues, features, and structural elements.
+/* a rainbow */
+background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);` },
 
-These tools typically catch 30 to 50 percent of accessibility issues. Manual testing is required for the rest.
+          { type: 'heading', text: `Radial and conic gradients` },
+          { type: 'text', text: `A radial gradient spreads out from a centre point; by default its shape is an ellipse, but you can make it a circle. A conic gradient sweeps around a centre point like the face of a clock.` },
+          { type: 'code', code: `background-image: radial-gradient(red, yellow, green);
+background-image: radial-gradient(circle, red, yellow, green);
+background-image: conic-gradient(red, yellow, green);` },
 
-Keyboard Testing
+          { type: 'heading', text: `Text shadows` },
+          { type: 'text', text: `The text-shadow property adds a shadow behind text. Its values are the horizontal offset, the vertical offset, the blur radius, and the colour. You can add several shadows separated by commas.` },
+          { type: 'code', code: `h1 {
+  text-shadow: 2px 2px 5px red;
+}` },
 
-Navigate your entire website using only the keyboard:
+          { type: 'heading', text: `Box shadows and cards` },
+          { type: 'text', text: `The box-shadow property does the same for the whole box, and it is the classic way to make an element look like a raised card. The values are horizontal offset, vertical offset, blur, and colour.` },
+          { type: 'code', code: `.card {
+  width: 250px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+              0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}` },
+        ],
+      },
+      {
+        id: 'positioning-and-transforms',
+        title: 'Positioning and Transforms',
+        blocks: [
+          { type: 'text', text: `The position property controls how an element is placed on the page. There are five values, and each changes the meaning of the offset properties top, right, bottom, and left.` },
 
-Use Tab to move forward through interactive elements. Use Shift plus Tab to move backward. Use Enter or Space to activate buttons and links. Use Arrow keys to navigate within components like menus or tabs. Use Escape to close dialogs and dropdowns.
+          { type: 'heading', text: `The five position values` },
+          { type: 'list', items: [
+            `static is the default: elements sit in normal document order and ignore top/left.`,
+            `relative places an element relative to where it would normally sit, so you can nudge it with top/left.`,
+            `absolute places an element relative to its nearest positioned ancestor (one that is not static); if there is none, it is placed relative to the page.`,
+            `fixed places an element relative to the browser window, so it stays put even as you scroll.`,
+            `sticky toggles between relative and fixed depending on the scroll position, which is how sticky headers work.`,
+          ] },
+          { type: 'code', code: `#relative {
+  position: relative;
+  left: 20px;      /* nudged 20px to the right */
+}
 
-Check that every interactive element is reachable. Verify that focus is visible at all times. Ensure the tab order follows a logical sequence.
+#fixed {
+  position: fixed;
+  top: 0;          /* stays at the top while scrolling */
+}` },
 
-Screen Reader Testing
+          { type: 'heading', text: `2D transforms` },
+          { type: 'text', text: `The transform property lets you move, rotate, scale, or skew an element without affecting the layout around it. These are 2D transforms.` },
+          { type: 'code', code: `.rotated { transform: rotate(30deg); }
+.bigger  { transform: scale(1.5); }
+.moved   { transform: translate(20px, 10px); }` },
 
-Test with at least one screen reader:
+          { type: 'heading', text: `3D transforms` },
+          { type: 'text', text: `Adding a perspective and using the Z axis creates a sense of depth. perspective() sets how strong the 3D effect is, and functions like rotateX, rotateY, and translateZ move the element in three dimensions.` },
+          { type: 'code', code: `.tilted {
+  transform: perspective(400px) rotateX(45deg) rotateY(45deg);
+}` },
+        ],
+      },
+      {
+        id: 'flexbox',
+        title: 'Flexbox',
+        blocks: [
+          { type: 'text', text: `Flexbox is a layout system for arranging items in a single direction, a row or a column. You turn an element into a flex container by setting display: flex; its direct children then become flex items that you can align and distribute with ease.` },
+          { type: 'code', code: `.flex-container {
+  display: flex;
+}` },
 
-NVDA is a free screen reader for Windows. VoiceOver is built into macOS (activate with Command plus F5) and iOS. TalkBack is built into Android devices.
+          { type: 'heading', text: `Aligning items` },
+          { type: 'text', text: `justify-content distributes items along the main axis (the direction the container flows). align-items aligns them on the cross axis (across the flow). Common values include center, space-between, space-around, flex-start, and flex-end.` },
+          { type: 'code', code: `.flex-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}` },
 
-When testing with a screen reader, verify that all images have appropriate alternative text. Check that headings are announced with their level. Ensure form fields have clear labels. Verify that dynamic content changes are announced. Test that custom widgets (tabs, accordions, modals) are usable.
+          { type: 'heading', text: `Order` },
+          { type: 'text', text: `A flex item need not appear in the same order as it is written in the HTML. The order property controls its position; the default is 0, and lower numbers come first.` },
+          { type: 'code', code: `<div class="flex-container">
+  <div style="order: 3;">1</div>
+  <div style="order: 1;">2</div>
+  <div style="order: 2;">3</div>
+</div>` },
 
-Color Contrast Testing
+          { type: 'heading', text: `Grow, shrink, and basis` },
+          { type: 'text', text: `flex-grow decides how much an item grows to fill spare space relative to its siblings. flex-shrink decides how much it shrinks when space is tight; a value of 0 stops it shrinking at all. flex-basis sets an item's initial size before growing or shrinking.` },
+          { type: 'code', code: `/* the third item grows 8 times as much as the others */
+<div style="flex-grow: 8">3</div>
 
-Text must have sufficient contrast against its background. WCAG requires a contrast ratio of at least 4.5 to 1 for normal text and 3 to 1 for large text.
+/* the third item refuses to shrink */
+<div style="flex-shrink: 0">3</div>
 
-Tools like the WebAIM Contrast Checker let you input foreground and background colors to verify they meet the requirements.
+/* the third item starts at 200px */
+<div style="flex-basis: 200px">3</div>` },
+          { type: 'text', text: `The flex property is a shorthand for all three, in the order grow, shrink, basis. This item will not grow, will not shrink, and starts at 200 pixels:` },
+          { type: 'code', code: `<div style="flex: 0 0 200px">3</div>` },
 
-Creating an Accessibility Testing Checklist
+          { type: 'heading', text: `Aligning a single item` },
+          { type: 'text', text: `The align-self property aligns one chosen item on the cross axis, overriding the container's align-items for that item.` },
+          { type: 'code', code: `<div class="flex-container">
+  <div>1</div>
+  <div style="align-self: flex-start">2</div>
+  <div style="align-self: flex-end">3</div>
+</div>` },
+        ],
+      },
+      {
+        id: 'grid',
+        title: 'CSS Grid',
+        blocks: [
+          { type: 'text', text: `Where Flexbox lays out items in one direction, CSS Grid lays them out in two: rows and columns at the same time. You create a grid by setting display: grid on a container and then describing its rows and columns.` },
+          { type: 'code', code: `.container {
+  display: grid;
+  grid-template-rows: 30px 1fr 30px;
+  grid-template-columns: 100px 400px;
+  grid-gap: 4px;
+}` },
+          { type: 'text', text: `The fr unit means a fraction of the leftover space, so 1fr fills whatever room remains after the fixed tracks are placed. grid-gap sets the spacing between the cells.` },
 
-For each page, verify the following:
+          { type: 'heading', text: `Grid template areas` },
+          { type: 'text', text: `A powerful feature of Grid is naming regions of the layout and drawing them as a picture. You name each area with grid-area, then arrange them visually with grid-template-areas.` },
+          { type: 'code', code: `.container {
+  display: grid;
+  grid-template-rows: 30px 1fr 30px;
+  grid-template-columns: 100px 400px;
+  grid-template-areas:
+    "hd hd"
+    "side main"
+    "ft ft";
+}
 
-All images have alt text (or are marked as decorative). Heading hierarchy is logical with no skipped levels. All interactive elements are keyboard accessible. Focus is visible on all interactive elements. Form fields have associated labels. Color is not the only way information is conveyed. Text has sufficient contrast. Dynamic content changes are announced to screen readers. The page has a descriptive title. The language of the page is specified in the html element.
+#header  { grid-area: hd; }
+#sidebar { grid-area: side; }
+#content { grid-area: main; }
+#footer  { grid-area: ft; }` },
+          { type: 'text', text: `Reading the template, the header spans both columns of the top row, the sidebar and main content share the middle row, and the footer spans the bottom. The layout is described in a way you can almost see by reading it aloud.` },
+        ],
+      },
+      {
+        id: 'responsive-design',
+        title: 'Responsive Design with Media Queries',
+        blocks: [
+          { type: 'text', text: `A responsive page adapts to the size of the screen it is viewed on, from a wide monitor to a narrow phone. The main tool for this is the media query, which applies a block of CSS only when a condition about the screen is true.` },
 
-Key Takeaways
+          { type: 'heading', text: `Writing a media query` },
+          { type: 'text', text: `A media query starts with @media, followed by a condition such as a maximum width. The rules inside apply only when the condition holds. Here, when the screen is 350 pixels wide or less, a two-column grid collapses into a single column.` },
+          { type: 'code', code: `@media (max-width: 350px) {
+  .container {
+    grid-template-rows: 30px 1fr 1fr 30px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "hd"
+      "side"
+      "main"
+      "ft";
+  }
+}` },
 
-Use a combination of automated tools and manual testing. Keyboard testing reveals navigation and focus issues. Screen reader testing verifies the experience for blind users. Color contrast testing ensures readability for low-vision users. No single tool catches all issues, so test thoroughly.`,
+          { type: 'heading', text: `Breakpoints` },
+          { type: 'text', text: `The screen widths at which your layout changes are called breakpoints. You choose them where the design starts to look cramped, not for any specific device. A common approach is to design for small screens first and then add media queries that enhance the layout as more space becomes available.` },
+
+          { type: 'heading', text: `The viewport meta tag` },
+          { type: 'text', text: `Responsive CSS only works if the page tells the browser to use the device's real width. That is the job of the viewport meta tag, which belongs in the <head> of every page.` },
+          { type: 'code', code: `<meta name="viewport" content="width=device-width, initial-scale=1.0">` },
+          { type: 'text', text: `With that tag in place and a few well-chosen media queries, a single page can serve every screen size well.` },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'javascript',
+    title: 'JavaScript: Bringing Pages to Life',
+    description:
+      'Make your pages interactive. This course takes you from the language basics through objects and memory, functions and scope, the DOM and events, performance and the event loop, and modern asynchronous JavaScript with promises, async/await, and fetch. It ends by building two small apps. Written from real class notes, with runnable examples throughout.',
+    level: 'Beginner to Intermediate',
+    chapters: [
+      {
+        id: 'basics',
+        title: 'Variables, Data Types, and Operators',
+        blocks: [
+          { type: 'text', text: `JavaScript is the language that makes web pages interactive. Before we touch a page, let us learn the language itself. Two everyday tools for seeing output are console.log, which prints to the browser console, and alert, which shows a pop-up.` },
+          { type: 'code', code: `console.log("Namaste Duniya");
+alert("Well done!");` },
+
+          { type: 'heading', text: `Variables: let, var, and const` },
+          { type: 'text', text: `A variable stores a value. You can declare one with let, var, or const. let is block scoped and can be reassigned. const is also block scoped but cannot be reassigned. var is the old way; it is function or globally scoped and is best avoided in new code. JavaScript is dynamically typed, which means it works out a value's type at runtime, so you do not declare the type yourself.` },
+          { type: 'code', code: `let a = 5;         // block scoped, can change
+const num = 5;     // block scoped, cannot be reassigned
+var b = 10;        // function or global scoped (older style)` },
+
+          { type: 'heading', text: `Primitive data types` },
+          { type: 'text', text: `The primitive types hold a single simple value. The common ones are string for text, number for any number, and boolean for true or false.` },
+          { type: 'code', code: `let name = "KK";       // string
+let age = 25;          // number
+let isActive = true;   // boolean` },
+
+          { type: 'heading', text: `Objects and arrays` },
+          { type: 'text', text: `An object groups related values as key-value pairs. You read a property with dot notation or bracket notation. An array is an ordered list of values, and arrays are mutable, meaning you can change them.` },
+          { type: 'code', code: `let person = { name: "KK", age: 25 };
+console.log(person.age);       // dot notation
+console.log(person["name"]);   // bracket notation
+
+let colors = ["red", "blue", "green"];` },
+
+          { type: 'heading', text: `Conditional statements` },
+          { type: 'text', text: `An if-else if-else chain runs different code depending on a condition. When you are comparing one value against many fixed options, a switch statement can be clearer.` },
+          { type: 'code', code: `let hour = 10;
+if (hour < 12) {
+  console.log("Good morning");
+} else if (hour < 17) {
+  console.log("Good afternoon");
+} else {
+  console.log("Good evening");
+}
+
+let role = "admin";
+switch (role) {
+  case "admin":
+    console.log("Admin user");
+    break;
+  case "guest":
+    console.log("Guest user");
+    break;
+  default:
+    console.log("Unknown user");
+}` },
+
+          { type: 'heading', text: `Loops` },
+          { type: 'text', text: `Loops repeat work. The for loop is the workhorse. while runs as long as a condition holds, and do-while runs its body at least once before checking. To walk through data, use for...in to iterate over an object's keys and for...of to iterate over the values of an array.` },
+          { type: 'code', code: `for (let i = 0; i < 5; i++) {
+  console.log("Hello", i);
+}
+
+let person1 = { name: "KK", age: 25 };
+for (let key in person1) {
+  console.log(key, person1[key]);
+}
+
+let colors1 = ["red", "blue", "green"];
+for (let color of colors1) {
+  console.log(color);
+}` },
+        ],
+      },
+      {
+        id: 'objects-and-memory',
+        title: 'Objects, Cloning, and Memory',
+        blocks: [
+          { type: 'heading', text: `Objects with methods` },
+          { type: 'text', text: `An object can hold functions as well as data. A function stored on an object is called a method. Inside a method, the keyword this refers to the object itself.` },
+          { type: 'code', code: `const rectangle = {
+  width: 10,
+  height: 20,
+  area: function () {
+    return this.width * this.height;
+  }
+};
+console.log(rectangle.area());   // 200` },
+
+          { type: 'heading', text: `Factory and constructor functions` },
+          { type: 'text', text: `When you need to create many similar objects, a factory function builds and returns a new object each time it is called. A constructor function does the same job with the new keyword, and by convention its name is written in PascalCase.` },
+          { type: 'code', code: `// factory function
+function createRectangle(width, height) {
+  return {
+    width,
+    height,
+    area: function () { return this.width * this.height; }
+  };
+}
+let r1 = createRectangle(10, 20);
+
+// constructor function
+function Product(name, price, description) {
+  this.name = name;
+  this.price = price;
+  this.displayInfo = function () {
+    console.log(\`\${this.name}: $\${this.price}\`);
+  };
+}
+const p1 = new Product("Laptop", 1200, "A fast laptop");` },
+
+          { type: 'heading', text: `Primitives versus references` },
+          { type: 'text', text: `This is one of the most important ideas in JavaScript. Primitive values are copied by value: each variable gets its own copy. Objects are copied by reference: two variables can point to the same object in memory, so a change through one is seen through the other.` },
+          { type: 'code', code: `// primitives are copied by value
+let x = 10;
+let y = x;
+x++;
+console.log(x, y);   // 11 10
+
+// objects are copied by reference
+let a = { value: 10 };
+let b = a;
+a.value++;
+console.log(a.value, b.value);   // 11 11  (same object!)` },
+
+          { type: 'heading', text: `Call by value versus call by reference` },
+          { type: 'text', text: `The same rule applies when you pass values into functions. A primitive passed to a function is a copy, so changes inside do not affect the original. An object passed to a function is the same object, so changes inside are visible outside.` },
+          { type: 'code', code: `let number = 10;
+function increase(n) { n++; }
+increase(number);
+console.log(number);   // 10, unchanged
+
+let obj = { value: 10 };
+function bump(o) { o.value++; }
+bump(obj);
+console.log(obj.value);   // 11, changed` },
+
+          { type: 'heading', text: `Cloning objects` },
+          { type: 'text', text: `Because objects are shared by reference, copying them needs care. A shallow copy duplicates the top-level properties but still shares any nested objects. A deep copy duplicates everything, so nothing is shared.` },
+          { type: 'code', code: `const circle = { radius: 1 };
+
+// shallow copy
+const c1 = Object.assign({}, circle);
+
+// deep copy (note: this technique does not copy functions)
+const c2 = JSON.parse(JSON.stringify(circle));` },
+          { type: 'text', text: `JavaScript also manages memory for you. Its garbage collector automatically frees the memory of any object that no longer has references pointing to it, so you rarely think about freeing memory yourself.` },
+        ],
+      },
+      {
+        id: 'strings-arrays-callbacks',
+        title: 'Math, Strings, Arrays, and Callbacks',
+        blocks: [
+          { type: 'heading', text: `The Math object` },
+          { type: 'text', text: `The built-in Math object holds handy numeric functions and constants.` },
+          { type: 'code', code: `Math.round(4.7);    // 5
+Math.ceil(4.1);     // 5
+Math.floor(4.9);    // 4
+Math.abs(-5);       // 5
+Math.pow(2, 3);     // 8
+Math.sqrt(16);      // 4
+Math.max(1, 2, 3);  // 3
+Math.random();      // a random number between 0 and 1` },
+
+          { type: 'heading', text: `Strings and template literals` },
+          { type: 'text', text: `Strings come with many useful methods, such as length, toUpperCase, slice, split, replace, and trim. To build a string from variables, template literals are the cleanest choice: write the text in backticks and drop values in with the dollar-brace syntax.` },
+          { type: 'code', code: `let name = "John";
+let age = 25;
+let sentence = \`My name is \${name} and I am \${age} years old.\`;
+console.log(sentence);` },
+
+          { type: 'heading', text: `Arrow functions` },
+          { type: 'text', text: `Arrow functions are a shorter way to write functions. When the body is a single expression, it is returned automatically.` },
+          { type: 'code', code: `// regular function
+function add(a, b) { return a + b; }
+
+// arrow function
+let addArrow = (a, b) => a + b;` },
+
+          { type: 'heading', text: `map, filter, and find` },
+          { type: 'text', text: `These array methods take a function and apply it to every element. map transforms each element into a new one, filter keeps only the elements that pass a test, and find returns the first element that passes.` },
+          { type: 'code', code: `let numbers = [1, 2, 3, 4, 5];
+
+let doubled = numbers.map(n => n * 2);        // [2, 4, 6, 8, 10]
+let evens   = numbers.filter(n => n % 2 === 0); // [2, 4]
+let three   = numbers.find(n => n === 3);       // 3` },
+          { type: 'text', text: `Because each of these returns a value, you can chain them together. Here we keep the adults and then reshape each into a smaller object:` },
+          { type: 'code', code: `const people = [
+  { name: "Alice", age: 17 },
+  { name: "Bob", age: 22 },
+  { name: "Eve", age: 18 }
+];
+const adults = people
+  .filter(person => person.age >= 18)
+  .map(person => ({ name: person.name }));` },
+
+          { type: 'heading', text: `Callback functions` },
+          { type: 'text', text: `A callback is a function passed as an argument to another function, to be run later, often after some operation finishes. Callbacks are everywhere in JavaScript, especially in timers, event handling, and network requests.` },
+          { type: 'code', code: `function fetchData(callback) {
+  setTimeout(() => {
+    const data = { name: "John Doe", age: 25 };
+    callback(data);
+  }, 2000);
+}
+function displayData(user) {
+  console.log(\`Name: \${user.name}, Age: \${user.age}\`);
+}
+fetchData(displayData);   // runs displayData after 2 seconds` },
+        ],
+      },
+      {
+        id: 'advanced-functions',
+        title: 'Advanced Functions, Scope, and Reduce',
+        blocks: [
+          { type: 'heading', text: `Declarations, expressions, and hoisting` },
+          { type: 'text', text: `A function declaration is hoisted, meaning JavaScript moves it to the top of its scope, so you can call it before it appears in the code. A function stored in a variable (a function expression) is not hoisted in the same way, so it must be defined before you use it.` },
+          { type: 'code', code: `run();   // works, because declarations are hoisted
+function run() { console.log("running"); }
+
+var run2 = function () { console.log("running2"); };
+run2();  // must come after the assignment` },
+
+          { type: 'heading', text: `Flexible arguments` },
+          { type: 'text', text: `JavaScript functions are relaxed about arguments. Extra arguments are ignored, and missing ones become undefined. Inside a regular function, the arguments object holds everything that was passed. To collect any number of arguments into a real array, use the rest operator, three dots before the last parameter.` },
+          { type: 'code', code: `function sumAll(...args) {
+  let total = 0;
+  for (let value of args) {
+    total += value;
+  }
+  return total;
+}
+sumAll(2, 3, 4, 5);   // 14` },
+
+          { type: 'heading', text: `Default parameters` },
+          { type: 'text', text: `A parameter can have a default value, used when no argument is supplied. Once a parameter has a default, the parameters to its right should have defaults too.` },
+          { type: 'code', code: `function simpleInterest(p, r, t = 1) {
+  return p * r * t;
+}
+simpleInterest(100, 0.2, 2);   // 40
+simpleInterest(100, 0.2);      // 20` },
+
+          { type: 'heading', text: `Getters and setters` },
+          { type: 'text', text: `A getter lets you read a computed property as if it were a normal one, and a setter lets you assign to it. They are handy for values derived from other properties.` },
+          { type: 'code', code: `let person = {
+  fName: "john",
+  lName: "doe",
+  get fullName() {
+    return \`\${this.fName} \${this.lName}\`;
+  },
+  set fullName(value) {
+    let parts = value.split(" ");
+    this.fName = parts[0];
+    this.lName = parts[1];
+  }
+};
+console.log(person.fullName);   // "john doe"
+person.fullName = "jane doe";   // sets fName and lName` },
+
+          { type: 'heading', text: `Error handling` },
+          { type: 'text', text: `Wrap risky code in a try block. If it throws an error, the catch block runs with the error. A finally block, if present, always runs afterwards, whether or not there was an error.` },
+          { type: 'code', code: `try {
+  throw new Error("something went wrong");
+} catch (e) {
+  console.log(e.message);
+} finally {
+  console.log("this always runs");
+}` },
+
+          { type: 'heading', text: `Scope` },
+          { type: 'text', text: `Scope is where a variable can be seen. A variable declared outside every function has global scope. One declared inside a function has local scope. let and const are also block scoped, meaning they exist only inside the nearest pair of braces, while var is only function scoped.` },
+          { type: 'code', code: `let x = 10;
+if (true) {
+  let x = 20;
+  console.log(x);   // 20 (a different, block-scoped x)
+}
+console.log(x);     // 10` },
+
+          { type: 'heading', text: `Reduce` },
+          { type: 'text', text: `The reduce method boils an array down to a single value. It takes a function with an accumulator and the current value, plus an optional starting value for the accumulator.` },
+          { type: 'code', code: `let numbers = [1, 2, 3, 4];
+let sum = numbers.reduce((accumulator, current) => accumulator + current, 0);
+console.log(sum);   // 10` },
+        ],
+      },
+      {
+        id: 'the-dom',
+        title: 'The DOM',
+        blocks: [
+          { type: 'text', text: `When a browser loads your HTML, it turns the whole page into a tree of JavaScript objects called the DOM, the Document Object Model. Through the DOM, your code can read and change any part of the page. The global window object represents the browser window, and the Browser Object Model (BOM) gives access to things like location and history.` },
+
+          { type: 'heading', text: `Selecting elements` },
+          { type: 'text', text: `To change an element you first have to select it. The modern, flexible way is querySelector, which takes any CSS selector and returns the first match, and querySelectorAll, which returns all matches. The older getElementById, getElementsByClassName, and getElementsByTagName still work too.` },
+          { type: 'code', code: `const heading = document.getElementById("heading");
+const firstItem = document.querySelector(".container p");
+const allItems = document.querySelectorAll(".container p");
+
+allItems.forEach(item => {
+  item.style.color = "green";
+});` },
+
+          { type: 'heading', text: `Changing content` },
+          { type: 'text', text: `There are two main ways to change what an element contains. innerHTML sets HTML, so any tags in the string are parsed and rendered. textContent sets plain text, so tags are shown literally as characters. Prefer textContent when you are inserting text a user typed, because it avoids accidentally running HTML.` },
+          { type: 'code', code: `element.innerHTML = "<p>Updated <em>italic</em> content</p>";
+element.textContent = "Just plain text";` },
+
+          { type: 'heading', text: `Creating and removing elements` },
+          { type: 'text', text: `You can build new elements with createElement, set them up, and then attach them to the page with appendChild. To remove an element, call removeChild on its parent.` },
+          { type: 'code', code: `const p = document.createElement("p");
+p.textContent = "This is a new paragraph!";
+document.body.appendChild(p);
+
+// remove it again
+p.parentElement.removeChild(p);` },
+
+          { type: 'heading', text: `Styles, attributes, and classes` },
+          { type: 'text', text: `You can change an element's inline style, its attributes, and its classes from JavaScript. For classes, the classList object is the cleanest tool: it can add, remove, toggle, and check for a class.` },
+          { type: 'code', code: `heading.style.backgroundColor = "lightblue";
+heading.setAttribute("id", "new-id");
+
+heading.classList.add("active");
+heading.classList.remove("old");
+heading.classList.toggle("active");
+heading.classList.contains("active");   // true or false` },
+        ],
+      },
+      {
+        id: 'events',
+        title: 'Events',
+        blocks: [
+          { type: 'text', text: `Events are how a page responds to the user: clicks, key presses, form submissions, and more. You react to an event by attaching a listener with addEventListener, which takes the event name and the function to run.` },
+          { type: 'code', code: `const heading = document.querySelector("h1");
+function handleClick() {
+  heading.style.color = "red";
+  alert("The heading was clicked");
+}
+heading.addEventListener("click", handleClick);` },
+          { type: 'text', text: `To stop listening, call removeEventListener with exactly the same element, event name, and function reference, which is one reason to give handler functions a name rather than writing them inline.` },
+
+          { type: 'heading', text: `The event object` },
+          { type: 'text', text: `Your handler receives an event object describing what happened. Its most useful member is event.target, the element that triggered the event. The method event.preventDefault() stops the browser's default behaviour, for example following a link.` },
+          { type: 'code', code: `const link = document.querySelector("a");
+link.addEventListener("click", function (event) {
+  event.preventDefault();   // do not follow the link
+  alert("The link was clicked");
+});` },
+
+          { type: 'heading', text: `Event phases` },
+          { type: 'text', text: `An event travels in three phases. First it captures, moving down the DOM from the top to the target. Then it is at the target. Then it bubbles, moving back up to the top. By default listeners run during bubbling; pass true as a third argument to addEventListener to listen during capturing instead.` },
+
+          { type: 'heading', text: `Event delegation` },
+          { type: 'text', text: `Rather than adding a listener to each of many child elements, you can add a single listener to their shared parent and use event.target to work out which child was involved. This is called event delegation, and it is both faster and simpler, and it even works for elements added later.` },
+          { type: 'code', code: `list.addEventListener("click", function (event) {
+  if (event.target.tagName === "LI") {
+    alert(event.target.textContent);
+  }
+});` },
+        ],
+      },
+      {
+        id: 'performance-event-loop',
+        title: 'Performance and the Event Loop',
+        blocks: [
+          { type: 'heading', text: `Reflow and repaint` },
+          { type: 'text', text: `Changing the page has a cost. A reflow happens when the browser recalculates layout, for example when you add or remove elements. A repaint happens when it redraws pixels. Adding a hundred elements one at a time can trigger a hundred reflows, which is slow.` },
+
+          { type: 'heading', text: `Document fragments` },
+          { type: 'text', text: `A document fragment is a lightweight, in-memory container. You can build many elements inside it without triggering any reflow, then attach the whole fragment to the page in a single step, causing just one reflow.` },
+          { type: 'code', code: `let fragment = document.createDocumentFragment();
+for (let i = 0; i < 100; i++) {
+  let p = document.createElement("p");
+  p.textContent = "Paragraph " + i;
+  fragment.appendChild(p);
+}
+document.body.appendChild(fragment);   // a single reflow` },
+
+          { type: 'heading', text: `Single-threaded JavaScript and the call stack` },
+          { type: 'text', text: `JavaScript runs on a single thread, executing one line at a time. It keeps track of function calls on the call stack: when a function is called it is pushed on, and when it returns it is popped off.` },
+
+          { type: 'heading', text: `The event loop` },
+          { type: 'text', text: `So how does JavaScript handle things that take time, like a timer, without freezing? It hands the task to the browser. When the task is ready, its callback waits in a queue. The event loop constantly checks: whenever the call stack is empty, it moves the next callback from the queue onto the stack to run. This is why the output below is not in source order.` },
+          { type: 'code', code: `console.log("Hi");
+setTimeout(function () {
+  console.log("Inside setTimeout");
+}, 3000);
+console.log("Bye bye");
+
+// Output: "Hi", "Bye bye", then after 3 seconds "Inside setTimeout"` },
+        ],
+      },
+      {
+        id: 'async-javascript',
+        title: 'Asynchronous JavaScript',
+        blocks: [
+          { type: 'text', text: `Synchronous code runs line by line. Asynchronous code does not; it starts something that finishes later, such as a network request. Managing that "later" cleanly is what this chapter is about. An API is simply an interface that lets two programs, such as a browser and a server, talk to each other.` },
+
+          { type: 'heading', text: `Promises` },
+          { type: 'text', text: `A promise represents a task that will either succeed or fail. You handle success with .then() and failure with .catch(). A promise is created with a function that receives resolve and reject.` },
+          { type: 'code', code: `const myPromise = new Promise((resolve, reject) => {
+  let connected = true;
+  if (connected) {
+    resolve("connection established");
+  } else {
+    reject("connection failed");
+  }
+});
+myPromise
+  .then(message => console.log(message))
+  .catch(message => console.log(message));` },
+
+          { type: 'heading', text: `async and await` },
+          { type: 'text', text: `Chaining many promises with nested .then() calls quickly gets messy. async and await let you write asynchronous code that reads like synchronous code. Marking a function async makes it return a promise, and await pauses inside it until a promise resolves.` },
+          { type: 'code', code: `async function getWeather() {
+  const delhi = await getDelhiWeather();
+  console.log(delhi);
+  const mumbai = await getMumbaiWeather();
+  console.log(mumbai);
+}` },
+          { type: 'text', text: `Be aware of sequencing. Awaiting one task and then the next runs them one after another. If the tasks do not depend on each other, start them both first and await afterwards so they run in parallel and finish sooner.` },
+
+          { type: 'heading', text: `The Fetch API` },
+          { type: 'text', text: `fetch is the modern way to make network requests, and it returns a promise. Combined with async/await and a try-catch block for errors, it makes talking to a server straightforward.` },
+          { type: 'code', code: `async function fetchUsers() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/users");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+}` },
+
+          { type: 'heading', text: `Closures` },
+          { type: 'text', text: `A closure is a function that keeps access to the variables of the function that created it, even after that outer function has finished. Closures give you private state: the counter below keeps its count hidden, reachable only through the returned function.` },
+          { type: 'code', code: `function createCounter() {
+  let count = 0;            // private
+  return function () {
+    count++;
+    return count;
+  };
+}
+const counter = createCounter();
+console.log(counter());   // 1
+console.log(counter());   // 2
+console.log(counter());   // 3` },
+        ],
+      },
+      {
+        id: 'mini-projects',
+        title: 'Mini Projects',
+        blocks: [
+          { type: 'text', text: `Let us put the pieces together. These two small apps use everything from earlier chapters: creating elements, handling events, and, in the counter, a closure to hold private state. Type them out and open the page to see them work.` },
+
+          { type: 'heading', text: `A counter app` },
+          { type: 'text', text: `This counter builds its own buttons and display, then wires up click handlers to change a private count and refresh the screen.` },
+          { type: 'code', code: `function createCounter() {
+  let count = 0;
+  const para = document.createElement("p");
+  const incBtn = document.createElement("button");
+  const decBtn = document.createElement("button");
+
+  incBtn.textContent = "Increment";
+  decBtn.textContent = "Decrement";
+
+  function updateUI() {
+    para.textContent = "Count: " + count;
+  }
+  incBtn.addEventListener("click", () => { count++; updateUI(); });
+  decBtn.addEventListener("click", () => { count--; updateUI(); });
+
+  updateUI();
+  document.body.append(incBtn, para, decBtn);
+}
+createCounter();` },
+
+          { type: 'heading', text: `A to-do app` },
+          { type: 'text', text: `This app reads text from an input, adds it to a list when the Add button is clicked, and removes the first item when Remove is clicked. It is pure DOM manipulation.` },
+          { type: 'code', code: `function todoApp() {
+  const input = document.createElement("input");
+  const addBtn = document.createElement("button");
+  const removeBtn = document.createElement("button");
+  const list = document.createElement("ul");
+
+  addBtn.textContent = "Add";
+  removeBtn.textContent = "Remove";
+
+  addBtn.addEventListener("click", function () {
+    const li = document.createElement("li");
+    li.textContent = input.value;
+    list.appendChild(li);
+    input.value = "";
+  });
+  removeBtn.addEventListener("click", function () {
+    const li = list.querySelector("li");
+    if (li) list.removeChild(li);
+  });
+
+  document.body.append(input, addBtn, removeBtn, list);
+}
+todoApp();` },
+          { type: 'text', text: `From here, keep building. Every larger application is made of these same ideas: select elements, respond to events, change the DOM, and fetch data from the web. You now have the whole toolkit.` },
+        ],
       },
     ],
   },

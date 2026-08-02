@@ -24,6 +24,7 @@ plan.txt
 
 # Source course material (contains private student submissions) — not for the site
 /Python with accessibility A and B/
+/lb_webDev/
 .playwright-mcp/
 
 npm-debug.log*
