@@ -261,8 +261,6 @@ export default function HandCricket() {
     setBotScore(newBot);
     setLastPlay({ userPick, botPick, out, runs, batterIsUser });
 
-    const picks = `You selected ${userPick}. Opponent selected ${botPick}.`;
-
     // Milestone: fifty
     let fiftyLine = '';
     if (!out && batterIsUser && userScore < 50 && newUser >= 50 && !userPassedFiftyRef.current) {
@@ -286,13 +284,13 @@ export default function HandCricket() {
           : `Out! You bowled them out on ${newBot}.`;
         const nextRole = batterIsUser ? c('bowlingStart') : c('battingStart');
         setCommentaryLine(`${c('out')} ${c('inningsBreak')}`);
-        announce(`${picks} ${outText} The target is ${newTarget}. ${c('out')} ${c('inningsBreak')} ${nextRole}`);
+        announce(`${outText} The target is ${newTarget}. ${c('out')} ${c('inningsBreak')} ${nextRole}`);
       } else {
         const total = batterIsUser ? newUser : newBot;
         const totalText = batterIsUser ? `Your total is ${total}.` : `Opponent total is ${total}.`;
         const runLine = c(RUN_EVENTS[runs]);
         setCommentaryLine(runLine + fiftyLine);
-        announce(`${picks} ${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} ${runLine}${fiftyLine}`);
+        announce(`${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} ${runLine}${fiftyLine}`);
       }
       return;
     }
@@ -314,7 +312,7 @@ export default function HandCricket() {
     if (need <= 6) pressure = ` ${c('chasePressure')}`;
     setCommentaryLine(runLine + fiftyLine);
     announce(
-      `${picks} ${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} Need ${need} more to win.${pressure} ${runLine}${fiftyLine}`
+      `${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} Need ${need} more to win.${pressure} ${runLine}${fiftyLine}`
     );
   }
 
