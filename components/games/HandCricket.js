@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { createCommentator } from '../../data/handCricketCommentary';
+import { createCommentator, strings } from '../../data/handCricketCommentary';
 import styles from './games.module.css';
 
 const RATE_OPTIONS = [
@@ -10,11 +10,24 @@ const RATE_OPTIONS = [
   { label: 'Fast', value: 1.35 },
 ];
 
-const RUN_WORDS = ['', 'One run', 'Two runs', 'Three runs', 'Four runs', 'Five runs', 'Six runs'];
 const RUN_EVENTS = ['', 'run1', 'run2', 'run3', 'run4', 'run5', 'run6'];
 
 function rand16() {
   return Math.floor(Math.random() * 6) + 1;
+}
+
+function voiceMatchesLang(v, lang) {
+  return lang === 'hi' ? /^hi/i.test(v.lang) : /^en/i.test(v.lang);
+}
+
+function pickVoiceForLang(list, lang) {
+  if (!list || list.length === 0) return null;
+  const matches = list.filter((v) => voiceMatchesLang(v, lang));
+  const pool = matches.length ? matches : list;
+  if (lang === 'hi') return pool.find((v) => /hi[-_]in/i.test(v.lang)) || pool[0];
+  return (
+    pool.find((v) => /en[-_](us|gb|in|au)/i.test(v.lang)) || pool[0]
+  );
 }
 
 const HISTORY_KEY = 'handCricketHistory';
@@ -42,6 +55,7 @@ export default function HandCricket() {
   const [supported, setSupported] = useState(true);
 
   const [speechOn, setSpeechOn] = useState(true);
+  const [lang, setLang] = useState('en');
   const [rate, setRate] = useState(1.05);
   const [voices, setVoices] = useState([]);
   const [voiceURI, setVoiceURI] = useState('');
@@ -71,11 +85,13 @@ export default function HandCricket() {
   const turnHeadingRef = useRef(null);
   const resultHeadingRef = useRef(null);
 
+  const S = strings[lang] || strings.en;
+
   useEffect(() => { voiceURIRef.current = voiceURI; }, [voiceURI]);
   useEffect(() => { rateRef.current = rate; }, [rate]);
   useEffect(() => { speechOnRef.current = speechOn; }, [speechOn]);
 
-  if (!commentatorRef.current) commentatorRef.current = createCommentator();
+  if (!commentatorRef.current) commentatorRef.current = createCommentator(lang);
 
   // Load speech, voices, preferences, and history.
   useEffect(() => {
@@ -86,13 +102,17 @@ export default function HandCricket() {
     let savedVoice = '';
     let savedRate = null;
     let savedSpeech = null;
+    let savedLang = 'en';
     try {
       savedVoice = localStorage.getItem('hcVoice') || '';
       savedRate = parseFloat(localStorage.getItem('hcRate'));
       savedSpeech = localStorage.getItem('hcSpeech');
+      const l = localStorage.getItem('hcLang');
+      if (l === 'hi' || l === 'en') savedLang = l;
     } catch (e) { /* ignore */ }
     if (savedRate && !Number.isNaN(savedRate)) setRate(savedRate);
     if (savedSpeech === 'off') setSpeechOn(false);
+    setLang(savedLang);
 
     const synth = typeof window !== 'undefined' ? window.speechSynthesis : null;
     if (!synth) {
@@ -103,15 +123,12 @@ export default function HandCricket() {
 
     function loadVoices() {
       const all = synth.getVoices();
-      const english = all.filter((v) => /^en/i.test(v.lang));
-      const list = english.length ? english : all;
-      setVoices(list);
+      if (!all.length) return;
+      setVoices(all);
       setVoiceURI((prev) => {
         if (prev) return prev;
-        if (savedVoice && list.some((v) => v.voiceURI === savedVoice)) return savedVoice;
-        const preferred = list.find((v) => /en[-_](gb|in|au)/i.test(v.lang)) ||
-          list.find((v) => /en[-_]us/i.test(v.lang));
-        return (preferred || list[0])?.voiceURI || '';
+        if (savedVoice && all.some((v) => v.voiceURI === savedVoice)) return savedVoice;
+        return pickVoiceForLang(all, savedLang)?.voiceURI || '';
       });
     }
     loadVoices();
@@ -121,6 +138,19 @@ export default function HandCricket() {
       synth.cancel();
     };
   }, []);
+
+  // When the language changes, switch to a matching default voice if the
+  // current one does not fit the new language.
+  const langInitRef = useRef(true);
+  useEffect(() => {
+    if (langInitRef.current) { langInitRef.current = false; return; }
+    if (!voices.length) return;
+    const current = voices.find((v) => v.voiceURI === voiceURI);
+    if (!current || !voiceMatchesLang(current, lang)) {
+      const next = pickVoiceForLang(voices, lang);
+      if (next) setVoiceURI(next.voiceURI);
+    }
+  }, [lang, voices]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const speak = useCallback((text) => {
     const synth = synthRef.current;
@@ -162,7 +192,7 @@ export default function HandCricket() {
     setResult(null);
     userPassedFiftyRef.current = false;
     botPassedFiftyRef.current = false;
-    commentatorRef.current = createCommentator();
+    commentatorRef.current = createCommentator(lang);
   }
 
   function startMatch() {
@@ -170,9 +200,10 @@ export default function HandCricket() {
     persist('hcVoice', voiceURI);
     persist('hcRate', String(rate));
     persist('hcSpeech', speechOn ? 'on' : 'off');
+    persist('hcLang', lang);
     setPhase('toss');
     const c = commentatorRef.current;
-    announce(`${c('matchStart')} Time for the toss. Press H for heads, or T for tails.`);
+    announce(`${c('matchStart')} ${S.tossTime}`);
   }
 
   function backToMenu() {
@@ -186,14 +217,14 @@ export default function HandCricket() {
     const c = commentatorRef.current;
     if (call === coin) {
       setPhase('choice');
-      announce(`${c('tossWin')} Press B to bat first, or L to bowl first.`);
+      announce(`${c('tossWin')} ${S.chooseBatBowl}`);
     } else {
       // Bot won the toss and bats first.
       setBattingFirst('bot');
       setCurrentBatter('bot');
       setInning(1);
       setPhase('batting');
-      announce(`${c('tossLose')} You are bowling first. ${c('bowlingStart')} First ball! Play a number from one to six.`);
+      announce(`${c('tossLose')} ${S.bowlFirst} ${c('bowlingStart')} ${S.firstBall}`);
     }
   }
 
@@ -202,11 +233,11 @@ export default function HandCricket() {
     if (role === 'bat') {
       setBattingFirst('user');
       setCurrentBatter('user');
-      announce(`You chose to bat first. ${c('battingStart')} First ball! Play a number from one to six.`);
+      announce(`${S.choseBat} ${c('battingStart')} ${S.firstBall}`);
     } else {
       setBattingFirst('bot');
       setCurrentBatter('bot');
-      announce(`You chose to bowl first. ${c('bowlingStart')} First ball! Play a number from one to six.`);
+      announce(`${S.choseBowl} ${c('bowlingStart')} ${S.firstBall}`);
     }
     setInning(1);
     setPhase('batting');
@@ -220,17 +251,13 @@ export default function HandCricket() {
     let sentence;
     if (finalUser > finalBot) {
       outcome = 'win';
-      sentence = userChased
-        ? 'You chased down the target. You win!'
-        : `You defended your total and win by ${margin} ${margin === 1 ? 'run' : 'runs'}.`;
+      sentence = userChased ? S.winChase : S.winDefend(margin);
     } else if (finalUser < finalBot) {
       outcome = 'lose';
-      sentence = userChased
-        ? `You fell short by ${margin} ${margin === 1 ? 'run' : 'runs'}. You lose.`
-        : 'The opponent chased down your total. You lose.';
+      sentence = userChased ? S.loseChase(margin) : S.loseDefend;
     } else {
       outcome = 'tie';
-      sentence = 'The scores are level. It is a tie!';
+      sentence = S.tieResult;
     }
 
     const record = { date: Date.now(), outcome, userScore: finalUser, botScore: finalBot };
@@ -245,7 +272,7 @@ export default function HandCricket() {
     if (outcome !== 'tie' && margin > 0 && margin <= 3) line = `${line} ${c('closeFinish')}`;
     setCommentaryLine(line);
     setPhase('result');
-    announce(`Match over. Your total ${finalUser}, opponent ${finalBot}. ${sentence} ${line} Press S to play again, or Q to return to the menu.`);
+    announce(`${S.matchOverPrefix(finalUser, finalBot)} ${sentence} ${line} ${S.playAgainPrompt}`);
   }
 
   function handlePick(n) {
@@ -285,18 +312,16 @@ export default function HandCricket() {
         setTarget(newTarget);
         setInning(2);
         setCurrentBatter(batterIsUser ? 'bot' : 'user');
-        const outText = batterIsUser
-          ? `Out! You are dismissed on ${newUser}.`
-          : `Out! You bowled them out on ${newBot}.`;
+        const outText = batterIsUser ? S.outDismissed(newUser) : S.outBowled(newBot);
         const nextRole = batterIsUser ? c('bowlingStart') : c('battingStart');
         setCommentaryLine(`${c('out')} ${c('inningsBreak')}`);
-        announce(`${outText} The target is ${newTarget}. ${c('out')} ${c('inningsBreak')} ${nextRole} First ball!`);
+        announce(`${outText} ${S.targetIs(newTarget)} ${c('out')} ${c('inningsBreak')} ${nextRole} ${S.firstBall}`);
       } else {
         const total = batterIsUser ? newUser : newBot;
-        const totalText = batterIsUser ? `Your total is ${total}.` : `Opponent total is ${total}.`;
+        const totalText = batterIsUser ? S.yourTotal(total) : S.oppTotal(total);
         const runLine = c(RUN_EVENTS[runs]);
         setCommentaryLine(runLine + fiftyLine);
-        announce(`${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} ${runLine}${fiftyLine} Next ball!`);
+        announce(`${S.runWords[runs]}${batterIsUser ? '' : S.toOpponent}${S.sep}${totalText} ${runLine}${fiftyLine} ${S.nextBall}`);
       }
       return;
     }
@@ -312,13 +337,13 @@ export default function HandCricket() {
       return;
     }
     const need = target - chasingScore;
-    const totalText = batterIsUser ? `Your total is ${chasingScore}.` : `Opponent total is ${chasingScore}.`;
+    const totalText = batterIsUser ? S.yourTotal(chasingScore) : S.oppTotal(chasingScore);
     const runLine = c(RUN_EVENTS[runs]);
     let pressure = '';
     if (need <= 6) pressure = ` ${c('chasePressure')}`;
     setCommentaryLine(runLine + fiftyLine);
     announce(
-      `${RUN_WORDS[runs]}${batterIsUser ? '' : ' to the opponent'}. ${totalText} Need ${need} more to win.${pressure} ${runLine}${fiftyLine} Next ball!`
+      `${S.runWords[runs]}${batterIsUser ? '' : S.toOpponent}${S.sep}${totalText} ${S.needToWin(need)}${pressure} ${runLine}${fiftyLine} ${S.nextBall}`
     );
   }
 
@@ -347,9 +372,12 @@ export default function HandCricket() {
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  const turnInstruction = currentBatter === 'user'
-    ? 'You are batting. Play a number from one to six to take your shot.'
-    : 'You are bowling. Play a number from one to six to bowl your delivery.';
+  const turnInstruction = currentBatter === 'user' ? S.battingTurn : S.bowlingTurn;
+
+  // Voices shown in the dropdown match the chosen language (fall back to all).
+  const langVoices = voices.filter((v) => voiceMatchesLang(v, lang));
+  const displayVoices = langVoices.length ? langVoices : voices;
+  const hasHindiVoice = voices.some((v) => /^hi/i.test(v.lang));
 
   // ---------- SETUP ----------
   if (phase === 'setup') {
@@ -370,6 +398,10 @@ export default function HandCricket() {
           <strong>1 to 6</strong> to play each ball, and after the match <strong>S</strong> to start
           again or <strong>Q</strong> to return to the menu.
         </p>
+        <p className={styles.meta}>
+          Commentary is available in <strong>English</strong> and <strong>Hindi</strong>. Choose
+          your language below; Hindi commentary sounds best with a Hindi system voice installed.
+        </p>
 
         {!supported && (
           <p className={`${styles.status} ${styles.statusError}`} role="alert">
@@ -389,6 +421,22 @@ export default function HandCricket() {
           </dl>
 
           <fieldset className={styles.fieldset}>
+            <legend className={styles.legend}>Commentary language</legend>
+            <div className={styles.controls} style={{ marginTop: 0 }}>
+              <label className={`${styles.option} ${lang === 'en' ? styles.optionSelected : ''}`}>
+                <input type="radio" name="hc-lang" value="en" checked={lang === 'en'}
+                  onChange={() => setLang('en')} />
+                <span>English</span>
+              </label>
+              <label className={`${styles.option} ${lang === 'hi' ? styles.optionSelected : ''}`}>
+                <input type="radio" name="hc-lang" value="hi" checked={lang === 'hi'}
+                  onChange={() => setLang('hi')} />
+                <span>{'\u0939\u093F\u0928\u094D\u0926\u0940'} (Hindi)</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>Commentary settings</legend>
             <label className={styles.option} style={{ marginBottom: '0.75rem' }}>
               <input
@@ -405,7 +453,7 @@ export default function HandCricket() {
                   <label htmlFor="hc-voice">Commentary voice</label>
                   <select id="hc-voice" className={styles.input} value={voiceURI}
                     onChange={(e) => setVoiceURI(e.target.value)} disabled={!speechOn}>
-                    {voices.map((v) => (
+                    {displayVoices.map((v) => (
                       <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>
                     ))}
                   </select>
@@ -418,6 +466,13 @@ export default function HandCricket() {
                   </select>
                 </div>
               </div>
+            )}
+            {supported && speechOn && lang === 'hi' && !hasHindiVoice && (
+              <p className={styles.meta} style={{ marginTop: '0.75rem' }}>
+                No Hindi voice was found on your device, so an English voice may not pronounce the
+                Hindi commentary well. You can still read every line on screen, or install a Hindi
+                voice in your system settings for spoken commentary.
+              </p>
             )}
           </fieldset>
 
@@ -473,11 +528,11 @@ export default function HandCricket() {
 
         <div className={styles.panel}>
           <div className={styles.scoreboard}>
-            <div><span className={styles.scoreLabel}>Innings</span><span className={styles.scoreValue}>{inning} of 2</span></div>
-            <div><span className={styles.scoreLabel}>Your score</span><span className={styles.scoreValue}>{userScore}</span></div>
-            <div><span className={styles.scoreLabel}>Opponent</span><span className={styles.scoreValue}>{botScore}</span></div>
+            <div><span className={styles.scoreLabel}>{S.labelInnings}</span><span className={styles.scoreValue}>{inning} / 2</span></div>
+            <div><span className={styles.scoreLabel}>{S.labelYourScore}</span><span className={styles.scoreValue}>{userScore}</span></div>
+            <div><span className={styles.scoreLabel}>{S.labelOpponent}</span><span className={styles.scoreValue}>{botScore}</span></div>
             {target !== null && (
-              <div><span className={styles.scoreLabel}>Target</span><span className={styles.scoreValue}>{target}</span></div>
+              <div><span className={styles.scoreLabel}>{S.labelTarget}</span><span className={styles.scoreValue}>{target}</span></div>
             )}
           </div>
 
@@ -498,7 +553,7 @@ export default function HandCricket() {
               </button>
             ))}
           </div>
-          <p className={styles.meta}>Tip: press the number keys 1 to 6 to play without the mouse.</p>
+          <p className={styles.meta}>{S.tipKeys}</p>
         </div>
       </div>
     );

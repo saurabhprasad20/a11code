@@ -1,13 +1,20 @@
-// Commentary engine for Hand Cricket.
+// Commentary and framing text for Hand Cricket, in English and Hindi.
 //
-// Lines are grouped by event. The picker avoids repeating a line until the
-// pool for that event has been mostly used, so commentary stays fresh across a
-// match and across matches. Tone deliberately mixes TV commentary, radio
-// commentary, cricket slang, funny, dramatic, and emotional registers.
+// `commentary` holds arrays of lines grouped by event, for each language. The
+// picker (createCommentator) avoids repeating a line until the pool is mostly
+// used, so commentary stays fresh. Tone deliberately mixes TV/radio commentary,
+// cricket slang, funny, dramatic, and emotional registers. The Hindi lines draw
+// on the flavour of real desi commentators (playful, quirky, full of masala).
+//
+// `strings` holds the framing text the game builds around each commentary line
+// (totals, "next ball", toss prompts, result sentences, in-match labels). For
+// spoken key names in Hindi we use Devanagari phonetics (एच, टी, बी, एल, एस,
+// क्यू) so a Hindi voice reads them naturally; the on-screen buttons keep the
+// Latin "(H)" hints.
 //
 // Add more lines freely; the engine needs no other changes.
 
-export const commentary = {
+const en = {
   matchStart: [
     'Welcome to the middle. The players are ready and so are we.',
     'Here we go, a fresh contest under the lights.',
@@ -214,12 +221,249 @@ export const commentary = {
   ],
 };
 
-// Returns a picker for the given event that avoids repeating a line until most
-// of the pool has been shown.
-export function createCommentator() {
+const hi = {
+  matchStart: [
+    'स्वागत है दोस्तों, मैदान सज चुका है और महामुक़ाबला शुरू होने को है।',
+    'लीजिए साहब, खेल शुरू! अब बल्ला बोलेगा और हम बोलेंगे।',
+    'तालियाँ हो जाएँ, आज का रोमांच शुरू होता है।',
+    'दर्शक तैयार, खिलाड़ी तैयार, और हम भी तैयार, चलिए शुरू करते हैं।',
+    'माहौल गरम है, दिल थाम के बैठिए, खेल शुरू!',
+    'नमस्कार! आज का मैच रोमांच से भरपूर होने वाला है।',
+    'बत्तियाँ जल उठीं, मैदान तैयार, अब बस खेल की देर है।',
+  ],
+  tossWin: [
+    'टॉस आपके नाम! दिन का पहला फ़ैसला आपका।',
+    'सिक्का आपके हक़ में गिरा, शुभ शुरुआत!',
+    'वाह! टॉस जीत लिया आपने, बढ़िया।',
+    'क़िस्मत आज आपके साथ है, टॉस आपका।',
+    'सिक्का घूमा और आपकी झोली में गिरा, टॉस जीते!',
+  ],
+  tossLose: [
+    'टॉस हाथ से निकल गया, बॉट पहले बल्लेबाज़ी करेगा।',
+    'सिक्के ने दग़ा दे दिया, अब गेंद आपके हाथ।',
+    'टॉस बॉट के नाम, पहले फ़ील्डिंग आपकी।',
+    'क़िस्मत ने पलटी मारी, बॉट बैटिंग पर आ गया।',
+    'इस बार सिक्का बॉट का यार निकला, पहले वो बल्लेबाज़ी करेगा।',
+  ],
+  battingStart: [
+    'बल्ला उठाइए, मैदान में उतरिए, पारी शुरू!',
+    'गार्ड ले लीजिए, गेंद पर नज़र, दम दिखाइए।',
+    'अब बारी आपकी, बल्ले से आग लगाइए।',
+    'पैड बँधे, दस्ताने तैयार, चलिए रन बनाइए।',
+    'नज़र गेंद पर, दिल में हौसला, पारी की शुरुआत कीजिए।',
+  ],
+  bowlingStart: [
+    'गेंद हाथ में, अब विकेट का शिकार कीजिए।',
+    'एक अच्छी गेंद और पूरा खेल पलट सकता है।',
+    'रन रोकिए, दबाव बनाइए, विकेट निकालिए।',
+    'गेंदबाज़ी आपकी, कसके रखिए हर गेंद।',
+    'रन-अप नापिए, बल्लेबाज़ इंतज़ार में है।',
+  ],
+  run1: [
+    'एक रन, चुपके से चुरा लिया।',
+    'हल्का सा धकेला और दौड़ लगा दी, एक रन।',
+    'सिंगल लिया, स्कोरबोर्ड चलता रहे।',
+    'एक रन जोड़ लिया, बूँद बूँद से घड़ा भरता है।',
+    'नरम हाथों से एक आसान सिंगल।',
+    'दौड़ के एक रन, स्ट्राइक भी बदल गई।',
+    'गैप में सरकाया और एक रन पक्का।',
+    'तेज़ दौड़, एक रन, समझदारी भरा खेल।',
+  ],
+  run2: [
+    'दो रन, बढ़िया दौड़ भागी!',
+    'गैप में गेंद, और दो रन पूरे।',
+    'तेज़ दौड़ के दो रन ले लिए।',
+    'दो रन, टाँगें आज ख़ूब चल रही हैं।',
+    'एक को दो बना दिया, ये है समझदारी!',
+    'फ़ील्डर ताकता रह गया, दो रन दौड़ लिए।',
+    'बढ़िया प्लेसमेंट, दो रन खाते में।',
+  ],
+  run3: [
+    'तीन रन! बेहतरीन प्लेसमेंट और दौड़।',
+    'गैप चीर दिया, तीन रन दौड़ लिए।',
+    'तीन रन, ये असली मेहनत वाली क्रिकेट है।',
+    'फ़ील्ड के बीच से तीन रन, वाह!',
+    'दूर तक भेजा और तीन रन दौड़ लिए।',
+    'तीन क़ीमती रन, टाँगों ने कमाल कर दिया।',
+  ],
+  run4: [
+    'चौका! गेंद सीमा रेखा को चूम आई।',
+    'ज़ोरदार शॉट, गेंद रस्सियों के पार, चौका!',
+    'फील्डर बने दर्शक, दर्शक बने फील्डर, गेंद बाहर!',
+    'टाइमिंग ऐसी कि गेंद ख़ुद बाउंड्री चली गई।',
+    'चौका! स्कोरबोर्ड वाले की उँगलियाँ थक जाएँगी।',
+    'बल्ले से निकली और सीधा फ़ेंस पर, शानदार चौका!',
+    'चार रन, गेंदबाज़ का दिल टूट गया।',
+    'क्या नज़ाकत है, गेंद ज़मीन पर सरकती हुई चौके को।',
+    'बल्ले का किनारा नहीं, बीचोंबीच से चौका!',
+  ],
+  run5: [
+    'पाँच रन! ओवरथ्रो ने एक को पाँच बना दिया।',
+    'नो बॉल और ऊपर से रन, पाँच जुड़ गए!',
+    'फ़ील्ड में अफ़रा-तफ़री, पाँच रन मुफ़्त में!',
+    'थ्रो सीधा बाउंड्री की ओर, दौड़ के पाँच रन!',
+    'मिसफ़ील्ड का पूरा फ़ायदा, पाँच रन!',
+    'गेंद इधर-उधर घूमती रही, पाँच रन बन गए!',
+    'फ़ील्डर आपस में टकरा गए, बल्लेबाज़ों की मौज, पाँच रन!',
+    'गेंद हाथ से फिसली और पाँच रन निकल गए!',
+  ],
+  run6: [
+    'छक्का! गेंद गई सीधी बुर्ज खलीफा!',
+    'एयर होस्टेस को हैलो बोल के आई ये गेंद, छक्का!',
+    'ये छक्का नहीं, सीधी मिसाइल थी!',
+    'इस गेंद की गुमशुदा तलाश केंद्र में रिपोर्ट लिखवा दो!',
+    'बल्ले ने कहा जा बेटा अंतरिक्ष घूम आ, छक्का!',
+    'छक्का! स्टेडियम के बाहर, दर्शक खड़े हो गए!',
+    'हवा में उड़ती हुई गेंद, सीधी छत के पार, छक्का!',
+    'गेंदबाज़ सिर पकड़ के बैठ गया, ज़बरदस्त छक्का!',
+    'बल्ले का पूरा जलवा, गेंद बादलों में, छह रन!',
+    'ये तो छक्कों की बरसात है, क्या टाइमिंग है!',
+  ],
+  out: [
+    'गया! सीधा पवेलियन की ओर!',
+    'आउट! विकेट गिरी जैसे गर्मी में आम टपके!',
+    'बत्ती गुल, स्टंप उखड़ गए!',
+    'आउट! गेंदबाज़ की दहाड़ सुनिए।',
+    'चलते बनो भाई, अगला बल्लेबाज़ आए!',
+    'बड़ा विकेट, और वो भी बड़े मौक़े पर!',
+    'नंबर मिल गए, पारी ख़त्म, आउट!',
+    'साफ़ बोल्ड! कोई शक़ नहीं, आउट।',
+    'गिल्लियाँ बिखर गईं, शानदार गेंद!',
+    'दबाव काम कर गया, विकेट आपके नाम!',
+    'खेल ख़त्म इस बल्लेबाज़ का, वापस जाओ पवेलियन।',
+  ],
+  fifty: [
+    'पचासा! शानदार अर्धशतक, बल्ला उठाइए।',
+    'पचास रन पूरे, दर्शक तालियाँ बजा रहे हैं।',
+    'क्या बल्लेबाज़ी है, पचासा ठोक दिया!',
+    'अर्धशतक! पारी अब पूरे रंग में आ गई।',
+    'पचास की दहलीज़ पार, धैर्य और जलवे का मेल!',
+  ],
+  inningsBreak: [
+    'पहली पारी ख़त्म, लक्ष्य तय हो गया।',
+    'अब पीछा शुरू, स्कोर सामने है।',
+    'पारी ख़त्म, अब खेल पलटने का वक़्त।',
+    'लक्ष्य बोर्ड पर, दबाव अब दूसरी तरफ़।',
+    'पहली पारी का हिसाब पूरा, अब असली इम्तिहान।',
+  ],
+  chasePressure: [
+    'अब हर रन क़ीमती है, दोनों तरफ़ नसें तन गईं।',
+    'आख़िरी पलों का रोमांच, दिल थाम लीजिए।',
+    'यहीं मैच जीते और हारे जाते हैं।',
+    'दबाव अपने चरम पर, हौसला बनाए रखिए।',
+    'माहौल में तनाव, कुकर की सीटी जैसी हालत!',
+  ],
+  win: [
+    'आप जीत गए! शानदार खेल।',
+    'जीत आपकी! सीना चौड़ा कर लीजिए।',
+    'कर दिखाया! लक्ष्य पार, बधाई हो!',
+    'वाह! क्या मुक़ाबला जीता है आपने।',
+    'चैंपियन! आज मैदान आपका है।',
+    'जीत की मिठाई बाँटिए, आप जीत गए!',
+    'बल्ले ने कमाल किया, जीत मुबारक हो!',
+  ],
+  lose: [
+    'इस बार हार गए, कोई बात नहीं।',
+    'हार भी खेल का हिस्सा है, अगली बार सही।',
+    'बॉट बाज़ी मार गया, फिर मिलेंगे मैदान में।',
+    'क़िस्मत आज साथ नहीं, हिम्मत बनाए रखिए।',
+    'थोड़े से रह गए, अगली बार पक्का जीतेंगे।',
+    'हार मानी नहीं जाती, वापसी ज़रूर करेंगे!',
+  ],
+  tie: [
+    'मुक़ाबला बराबर! टाई हो गया, अविश्वसनीय!',
+    'स्कोर बराबर, न कोई जीता न कोई हारा!',
+    'क्या रोमांचक अंत, मैच टाई!',
+    'बराबरी पर छूटा मुक़ाबला, ऐसा कम ही होता है!',
+    'दोनों ने दिल जीत लिया, नतीजा टाई!',
+  ],
+  closeFinish: [
+    'आख़िरी गेंद तक गया मुक़ाबला, दिल थमा रहा!',
+    'कांटे की टक्कर, साँसें रुक गईं!',
+    'इतना क़रीबी अंत, वाह क्या मैच था!',
+    'नाख़ून चबा देने वाला फ़िनिश!',
+    'रोंगटे खड़े कर देने वाला रोमांच, आख़िर तक!',
+  ],
+};
+
+export const commentary = { en, hi };
+
+export const strings = {
+  en: {
+    langLabel: 'English',
+    sep: '. ',
+    runWords: ['', 'One run', 'Two runs', 'Three runs', 'Four runs', 'Five runs', 'Six runs'],
+    tossTime: 'Time for the toss. Press H for heads, or T for tails.',
+    chooseBatBowl: 'Press B to bat first, or L to bowl first.',
+    firstBall: 'First ball! Play a number from one to six.',
+    nextBall: 'Next ball!',
+    bowlFirst: 'You are bowling first.',
+    choseBat: 'You chose to bat first.',
+    choseBowl: 'You chose to bowl first.',
+    toOpponent: ' to the opponent',
+    yourTotal: (t) => `Your total is ${t}.`,
+    oppTotal: (t) => `Opponent total is ${t}.`,
+    needToWin: (n) => `Need ${n} more to win.`,
+    outDismissed: (s) => `Out! You are dismissed on ${s}.`,
+    outBowled: (s) => `Out! You bowled them out on ${s}.`,
+    targetIs: (t) => `The target is ${t}.`,
+    matchOverPrefix: (u, b) => `Match over. Your total ${u}, opponent ${b}.`,
+    playAgainPrompt: 'Press S to play again, or Q to return to the menu.',
+    winChase: 'You chased down the target. You win!',
+    winDefend: (m) => `You defended your total and win by ${m} ${m === 1 ? 'run' : 'runs'}.`,
+    loseChase: (m) => `You fell short by ${m} ${m === 1 ? 'run' : 'runs'}. You lose.`,
+    loseDefend: 'The opponent chased down your total. You lose.',
+    tieResult: 'The scores are level. It is a tie!',
+    battingTurn: 'You are batting. Play a number from one to six to take your shot.',
+    bowlingTurn: 'You are bowling. Play a number from one to six to bowl your delivery.',
+    labelInnings: 'Innings',
+    labelYourScore: 'Your score',
+    labelOpponent: 'Opponent',
+    labelTarget: 'Target',
+    tipKeys: 'Tip: press the number keys 1 to 6 to play without the mouse.',
+  },
+  hi: {
+    langLabel: 'हिन्दी',
+    sep: '। ',
+    runWords: ['', 'एक रन', 'दो रन', 'तीन रन', 'चौका', 'पाँच रन', 'छक्का'],
+    tossTime: 'टॉस का समय। हेड्स के लिए एच, या टेल्स के लिए टी दबाइए।',
+    chooseBatBowl: 'बल्लेबाज़ी के लिए बी, या गेंदबाज़ी के लिए एल दबाइए।',
+    firstBall: 'पहली गेंद! एक से छह तक कोई नंबर दबाइए।',
+    nextBall: 'अगली गेंद!',
+    bowlFirst: 'पहले आप गेंदबाज़ी करेंगे।',
+    choseBat: 'आपने पहले बल्लेबाज़ी चुनी।',
+    choseBowl: 'आपने पहले गेंदबाज़ी चुनी।',
+    toOpponent: ', बॉट के नाम',
+    yourTotal: (t) => `आपका स्कोर ${t}।`,
+    oppTotal: (t) => `बॉट का स्कोर ${t}।`,
+    needToWin: (n) => `जीत के लिए ${n} रन और चाहिए।`,
+    outDismissed: (s) => `आउट! आप ${s} रन पर आउट हो गए।`,
+    outBowled: (s) => `आउट! आपने बॉट को ${s} रन पर आउट कर दिया।`,
+    targetIs: (t) => `लक्ष्य है ${t}।`,
+    matchOverPrefix: (u, b) => `मैच ख़त्म। आपका स्कोर ${u}, बॉट का ${b}।`,
+    playAgainPrompt: 'दोबारा खेलने के लिए एस, या मेन्यू के लिए क्यू दबाइए।',
+    winChase: 'आपने लक्ष्य हासिल कर लिया। आप जीत गए!',
+    winDefend: (m) => `आपने अपना स्कोर बचा लिया, ${m} रन से जीत।`,
+    loseChase: (m) => `आप ${m} रन से पीछे रह गए। आप हार गए।`,
+    loseDefend: 'बॉट ने लक्ष्य हासिल कर लिया। आप हार गए।',
+    tieResult: 'स्कोर बराबर। मुक़ाबला टाई!',
+    battingTurn: 'आप बल्लेबाज़ी कर रहे हैं। शॉट के लिए एक से छह तक नंबर दबाइए।',
+    bowlingTurn: 'आप गेंदबाज़ी कर रहे हैं। गेंद के लिए एक से छह तक नंबर दबाइए।',
+    labelInnings: 'पारी',
+    labelYourScore: 'आपका स्कोर',
+    labelOpponent: 'बॉट',
+    labelTarget: 'लक्ष्य',
+    tipKeys: 'सुझाव: बिना माउस के खेलने के लिए 1 से 6 तक की नंबर कुंजियाँ दबाइए।',
+  },
+};
+
+// Returns a picker for the given language that avoids repeating a line until
+// most of the pool for an event has been shown.
+export function createCommentator(lang = 'en') {
+  const lib = commentary[lang] || commentary.en;
   const recent = {};
   return function pick(event) {
-    const pool = commentary[event];
+    const pool = lib[event] || commentary.en[event];
     if (!pool || pool.length === 0) return '';
     if (!recent[event]) recent[event] = [];
     const used = recent[event];
