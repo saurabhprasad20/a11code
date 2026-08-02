@@ -136,6 +136,46 @@
   line-height: 1.8;
 }
 
+/* Block-based chapter content */
+.blockHeading {
+  font-size: 1.2rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+  color: var(--color-heading);
+}
+
+.blockList {
+  margin: 0 0 1rem 1.25rem;
+  padding-left: 0.75rem;
+  line-height: 1.8;
+}
+
+.blockList li {
+  margin-bottom: 0.4rem;
+}
+
+.codeBlock {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.15rem;
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary-light);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-family: 'Cascadia Code', 'Consolas', 'SFMono-Regular', 'Menlo', 'Liberation Mono', monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  white-space: pre;
+  tab-size: 4;
+  -moz-tab-size: 4;
+}
+
+.codeBlock code {
+  font-family: inherit;
+  white-space: inherit;
+}
+
 .chapterNav {
   display: flex;
   justify-content: space-between;

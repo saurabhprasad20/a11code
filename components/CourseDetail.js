@@ -5,6 +5,30 @@ import Link from 'next/link';
 import { courses } from '../data/courses';
 import styles from './CourseDetail.module.css';
 
+function ChapterBlock({ block }) {
+  switch (block.type) {
+    case 'heading':
+      return <h3 className={styles.blockHeading}>{block.text}</h3>;
+    case 'code':
+      return (
+        <pre className={styles.codeBlock} tabIndex={0} role="group" aria-label="Code example">
+          <code>{block.code}</code>
+        </pre>
+      );
+    case 'list':
+      return (
+        <ul className={styles.blockList}>
+          {block.items.map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
+      );
+    case 'text':
+    default:
+      return <p>{block.text}</p>;
+  }
+}
+
 export default function CourseDetail({ courseId }) {
   const course = courses.find((c) => c.id === courseId);
   const [activeChapter, setActiveChapter] = useState(0);
@@ -100,9 +124,13 @@ export default function CourseDetail({ courseId }) {
             Chapter {activeChapter + 1}: {chapter.title}
           </h2>
           <div className={styles.chapterText}>
-            {chapter.content.split('\n\n').map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
+            {chapter.blocks
+              ? chapter.blocks.map((block, i) => (
+                  <ChapterBlock key={i} block={block} />
+                ))
+              : chapter.content.split('\n\n').map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
           </div>
 
           <nav className={styles.chapterNav} aria-label="Chapter navigation">

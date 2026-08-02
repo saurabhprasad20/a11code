@@ -20,12 +20,13 @@ There is **no test runner and no linter configured** in `package.json`. Do not i
 - **No external UI libraries** — semantic HTML + CSS only.
 
 ### Layout & data flow
-- `app/layout.js` is the root layout: injects the skip-nav link, `<Header />`, `<main id="main-content">`, and `<Footer />`. Page files render only the page body inside these landmarks.
+- `app/layout.js` is the root layout: a pre-paint theme `<script>` in `<head>`, then `<RouteFocus />`, `<Header />`, `<main id="main-content" tabIndex={-1}>`, and `<Footer />`. Page files render only the page body inside these landmarks. The skip-nav link lives in `Header` (top of the brand bar), not the layout.
+- `components/RouteFocus.js` (`'use client'`) moves focus to `#main-content` and scrolls to top on every client-side route change (skips first mount), so keyboard/screen-reader users land on the new page's `<h1>`. This is why `<main>` has `tabIndex={-1}` and `main:focus { outline: none }` in `globals.css`.
 - Content lives as plain JS arrays in `data/` (`courses.js`, `blogs.js`, `resources.js`, `games.js`). Pages and components import directly from `data/` — there is no CMS, database, or fetch layer.
 
 ### Directories
 - `app/` — pages: Home, `courses/`, `blogs/`, `resources/`, `games/`, `contact/`
-- `components/` — shared components (`Header`, `Footer`, `CourseDetail`) each with a co-located `.module.css`
+- `components/` — shared components (`Header`, `Footer`, `CourseDetail`, `ThemeToggle`, `RouteFocus`) plus `components/games/` (the playable games), each with a co-located `.module.css`
 - `data/` — content source of truth
 - `out/` — build output (deployed artifact; do not edit by hand)
 
@@ -48,6 +49,7 @@ There is **no test runner and no linter configured** in `package.json`. Do not i
   - **Never remove focus outlines.** `:focus-visible` styles in `globals.css` are load-bearing.
   - Support full keyboard navigation.
 - Interactive components are marked `'use client'`; static pages stay Server Components.
+- `Header` is two rows: a **brand bar** (logo/title, tagline, skip-nav link, `ThemeToggle`) and a separate **sticky navbar** below it (nav links + Courses dropdown). The mobile hamburger collapses the navbar row only.
 - Use the `next/link` `Link` component for internal navigation and `usePathname()` for active-state (`aria-current="page"`).
 - Icons/symbols are written as Unicode escapes in JSX (e.g. `'\u25BC'`) and marked `aria-hidden="true"`.
 
@@ -56,4 +58,8 @@ There is **no test runner and no linter configured** in `package.json`. Do not i
 - CI/CD: `.github/workflows/azure-static-web-apps-kind-smoke-085d6d41e.yml`.
 - Push to `master` auto-deploys to Azure Static Web Apps; PRs to `master` get preview deployments (closed PRs tear them down).
 - `app_location: "/"`, `output_location: "out"`.
-- `staticwebapp.config.json` configures Azure auth providers (AAD/GitHub/Google/Facebook/Twitter) via named app settings — do not hardcode client secrets there.
+- `staticwebapp.config.json` holds only a `navigationFallback` to `/404.html`. **Do not add an `auth` block** — this SWA is on the Free SKU, and an `auth`/`identityProviders` block fails the deploy with "only supported on the Standard SKU" (this already broke one deploy).
+
+## Tooling
+
+- **Playwright MCP** is configured (globally, in `~/.copilot/mcp-config.json`). Use it to drive a real browser against the dev server for accessibility verification — landmarks, heading order, keyboard/tab order, focus management on navigation, and the dark-mode toggle. Prefer this over guessing when validating accessibility-affecting changes.
