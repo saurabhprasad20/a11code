@@ -30,7 +30,7 @@ function squareOf(col, row) {
 }
 
 function describePiece(piece) {
-  if (!piece) return 'empty';
+  if (!piece) return 'blank';
   return `${COLOR_NAMES[piece.color]} ${PIECE_NAMES[piece.type]}`;
 }
 
