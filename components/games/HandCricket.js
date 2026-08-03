@@ -73,7 +73,7 @@ export default function HandCricket() {
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState({ wins: 0, losses: 0, ties: 0, highest: 0, played: 0 });
 
-  const [wickets, setWickets] = useState(11);
+  const [wickets, setWickets] = useState(1);
 
   // Match state
   const [battingFirst, setBattingFirst] = useState('user'); // 'user' | 'bot'
