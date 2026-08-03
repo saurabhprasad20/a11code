@@ -500,3 +500,57 @@
   border-radius: 8px;
   background: var(--color-bg-alt);
 }
+
+/* ---------------- Sound Rally ---------------- */
+.rallyCourt {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  aspect-ratio: 3 / 4;
+  margin: 1rem auto;
+  border: 3px solid var(--color-primary);
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      to right,
+      var(--color-bg-alt),
+      var(--color-bg-alt) calc(10% - 1px),
+      var(--color-border) calc(10% - 1px),
+      var(--color-border) 10%
+    );
+  overflow: hidden;
+}
+
+.rallyBaselineTop {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-accent);
+  opacity: 0.6;
+}
+
+.rallyBall {
+  position: absolute;
+  width: 7%;
+  height: 5.25%;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px 3px var(--color-accent);
+  transform: translate(-50%, -50%);
+  transition: opacity 0.1s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rallyBat {
+  position: absolute;
+  bottom: 3%;
+  width: 9%;
+  height: 2.4%;
+  border-radius: 4px;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+  transition: left 0.06s linear;
+}

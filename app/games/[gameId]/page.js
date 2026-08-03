@@ -3,12 +3,14 @@ import { games, getGame } from '../../../data/games';
 import TypingTest from '../../../components/games/TypingTest';
 import HandCricket from '../../../components/games/HandCricket';
 import AccessibleChess from '../../../components/games/AccessibleChess';
+import RallyGame from '../../../components/games/RallyGame';
 import styles from './page.module.css';
 
 const GAME_COMPONENTS = {
   'typing-test': TypingTest,
   'hand-cricket': HandCricket,
   'accessible-chess': AccessibleChess,
+  'sound-rally': RallyGame,
 };
 
 export function generateStaticParams() {
