@@ -125,7 +125,7 @@ export default function Header() {
                 className={`${styles.navLink} ${styles.dropdownToggle}`}
                 onClick={() => setCoursesOpen(!coursesOpen)}
                 aria-expanded={coursesOpen}
-                aria-haspopup="true"
+                aria-controls="courses-dropdown-menu"
                 aria-current={pathname.startsWith('/courses') ? 'page' : undefined}
               >
                 Courses
@@ -134,7 +134,7 @@ export default function Header() {
                 </span>
               </button>
               {coursesOpen && (
-                <ul className={styles.dropdownMenu} role="list">
+                <ul id="courses-dropdown-menu" className={styles.dropdownMenu} role="list">
                   <li>
                     <Link href="/courses" className={styles.dropdownItem}>
                       All Courses

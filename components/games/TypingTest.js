@@ -359,7 +359,7 @@ export default function TypingTest() {
           </div>
 
           <p className={styles.meta} id="prompt-label">Current item to type:</p>
-          <p className={styles.target} aria-hidden="true">{currentPrompt}</p>
+          <p className={styles.target} aria-hidden={supported ? 'true' : undefined}>{currentPrompt}</p>
 
           <div className={styles.field}>
             <label htmlFor="typing-input">Type what you hear, then press Enter</label>

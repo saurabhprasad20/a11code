@@ -68,6 +68,7 @@ export default function AccessibleChess() {
   const gameRef = useRef(new Chess());
   const cellRefs = useRef({});
   const gridFocusedRef = useRef(false);
+  const botTimers = useRef([]);
   const synthRef = useRef(null);
   const speechOnRef = useRef(false);
   const rateRef = useRef(1.05);
@@ -109,7 +110,11 @@ export default function AccessibleChess() {
     return () => { synth.removeEventListener('voiceschanged', load); synth.cancel(); };
   }, []);
 
-  useEffect(() => () => { if (synthRef.current) synthRef.current.cancel(); }, []);
+  useEffect(() => () => {
+    if (synthRef.current) synthRef.current.cancel();
+    botTimers.current.forEach((id) => window.clearTimeout(id));
+    botTimers.current = [];
+  }, []);
 
   const speak = useCallback((text) => {
     const synth = synthRef.current;
@@ -130,6 +135,14 @@ export default function AccessibleChess() {
   }, [speak]);
 
   const persist = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } };
+
+  // Cancel any pending bot-move timers so a stray one cannot fire against a
+  // board that has since been reset (which could otherwise move the human's
+  // pieces and lock the game).
+  const clearBotTimers = useCallback(() => {
+    botTimers.current.forEach((id) => window.clearTimeout(id));
+    botTimers.current = [];
+  }, []);
 
   const focusCell = useCallback((col, row) => {
     const el = cellRefs.current[`${col},${row}`];
@@ -189,10 +202,16 @@ export default function AccessibleChess() {
   // Let the bot make its reply, off the paint path so "thinking" shows first.
   const botMove = useCallback(() => {
     const chess = gameRef.current;
-    if (chess.isGameOver()) return;
+    // Only move when it is genuinely the bot's turn.
+    if (chess.isGameOver() || chess.turn() === playerColor) return;
     setThinking(true);
     announce('Dobby is thinking.');
-    window.setTimeout(() => {
+    const id = window.setTimeout(() => {
+      // Re-check in case the game was reset while this timer was pending.
+      if (gameRef.current !== chess || chess.isGameOver() || chess.turn() === playerColor) {
+        setThinking(false);
+        return;
+      }
       let move;
       try {
         const verbose = chooseMove(chess.fen(), difficulty);
@@ -215,9 +234,11 @@ export default function AccessibleChess() {
       focusCell(col, row);
       if (outcome.over) { setResult(outcome); setPhase('over'); }
     }, 60);
+    botTimers.current.push(id);
   }, [difficulty, announce, syncFromGame, focusCell, playerColor]);
 
   function startGame() {
+    clearBotTimers();
     const chess = new Chess();
     gameRef.current = chess;
     setFen(chess.fen());
@@ -225,24 +246,29 @@ export default function AccessibleChess() {
     setTargets(new Set());
     setResult(null);
     setLastMove(null);
+    setThinking(false);
     setPhase('playing');
     persist('chessSpeech', speechOn ? 'on' : 'off');
     persist('chessRate', String(rate));
     persist('chessDifficulty', String(difficulty));
     persist('chessColor', playerColor);
     persist('chessVoice', voiceURI);
-    // Cursor at the player's back rank king square.
+    // Cursor at the player's back rank king square, and move focus into the
+    // board so the arrow keys work immediately.
     const startCursor = playerColor === 'w' ? { col: 4, row: 7 } : { col: 4, row: 0 };
     setCursor(startCursor);
+    gridFocusedRef.current = true;
+    window.requestAnimationFrame(() => focusCell(startCursor.col, startCursor.row));
     if (playerColor === 'w') {
       announce('New game. You are White and move first. Use the arrow keys to move around the board, and press Enter to pick up a piece.');
     } else {
       announce('New game. You are Black. Dobby will move first.');
-      window.setTimeout(() => botMove(), 400);
+      botTimers.current.push(window.setTimeout(() => botMove(), 400));
     }
   }
 
   function backToSetup() {
+    clearBotTimers();
     if (synthRef.current) synthRef.current.cancel();
     setPhase('setup');
     setStatus('');
@@ -282,7 +308,7 @@ export default function AccessibleChess() {
     const suffix = outcome.text ? ` ${outcome.text}` : '';
     announce(`You play ${describeMove(move)}.${suffix}`);
     if (outcome.over) { setResult(outcome); setPhase('over'); return; }
-    window.setTimeout(() => botMove(), 80);
+    botTimers.current.push(window.setTimeout(() => botMove(), 80));
   }
 
   function activateCursor() {
@@ -480,8 +506,7 @@ export default function AccessibleChess() {
                   kingInCheckSquare === square ? styles.chessCheck : '',
                 ].join(' ');
                 return (
-                  <button
-                    type="button"
+                  <div
                     role="gridcell"
                     key={square}
                     ref={(el) => { cellRefs.current[`${col},${row}`] = el; }}
@@ -492,7 +517,7 @@ export default function AccessibleChess() {
                     onClick={() => { setCursor({ col, row }); focusCell(col, row); activateCursorAt(col, row); }}
                   >
                     <span aria-hidden="true">{piece ? GLYPHS[piece.color][piece.type] : ''}</span>
-                  </button>
+                  </div>
                 );
               })}
             </div>
