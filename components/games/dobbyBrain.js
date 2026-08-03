@@ -27,8 +27,14 @@
 //     so it does not get out — and, among the safe numbers, leans toward big
 //     runs.
 //
-// A little controlled randomness keeps Dobby unpredictable and beatable, so the
-// meta-game (trying to out-think it) stays fun rather than hopeless.
+// Crucially, Dobby never plays a fixed argmax (which would make it repeat one
+// number and become trivially readable). Instead it turns its intent into a
+// score for each number and SOFTMAX-SAMPLES from it, with a temperature tied to
+// its confidence: a sharp, confident read makes it commit; a flat, uncertain
+// read makes it spread out (near random). It also penalises repeating its own
+// recent picks, so Dobby itself never falls into a pattern a human can exploit.
+// The result is fair against a random player (~50%) yet increasingly hard to
+// beat as it gathers a read on a patterned one.
 
 const NUMS = [1, 2, 3, 4, 5, 6];
 const SMOOTH = 0.6; // Laplace smoothing so unseen numbers keep a small chance.
@@ -52,20 +58,40 @@ function uniform() {
   return out;
 }
 
-// Weighted random pick from a probability map over 1..6.
-function sampleFrom(dist) {
-  let r = Math.random();
+// Confidence of a forecast in [0,1]: 0 when perfectly flat (no read on the
+// player), 1 when all the mass is on a single number.
+function confidence(dist) {
+  const peak = Math.max(...NUMS.map((n) => dist[n]));
+  return Math.max(0, (peak - 1 / 6) / (1 - 1 / 6));
+}
+
+// Softmax sample from a map of scores over 1..6 at a given temperature. Low
+// temperature commits to the best score; high temperature spreads out toward
+// uniform. This replaces any fixed argmax so Dobby is never deterministic.
+function softmaxSample(scores, temp) {
+  const t = Math.max(0.05, temp);
+  const vals = NUMS.map((n) => scores[n] / t);
+  const m = Math.max(...vals);
+  const exps = vals.map((v) => Math.exp(v - m));
+  const sum = exps.reduce((a, b) => a + b, 0) || 1;
+  let r = Math.random() * sum;
   for (let i = 0; i < NUMS.length; i += 1) {
-    r -= dist[NUMS[i]];
+    r -= exps[i];
     if (r <= 0) return NUMS[i];
   }
   return NUMS[NUMS.length - 1];
 }
 
-function argmax(dist) {
-  let best = NUMS[0];
-  NUMS.forEach((n) => { if (dist[n] > dist[best]) best = n; });
-  return best;
+// Penalty for repeating Dobby's own recent picks, so Dobby does not fall into a
+// readable pattern of its own (which is exactly how a human exploits a bot).
+function selfRepeatPenalty(recent, n) {
+  const len = recent.length;
+  if (len === 0) return 0;
+  let pen = 0;
+  if (recent[len - 1] === n) pen += 1;
+  if (len >= 2 && recent[len - 2] === n) pen += 0.5;
+  if (len >= 3 && recent[len - 3] === n) pen += 0.25;
+  return pen;
 }
 
 // A model of one stream of numbers (e.g. everything you play while batting).
@@ -197,34 +223,51 @@ export function createDobby() {
   };
   const batModel = createModel(scale(profile.bat)); // your picks while batting
   const bowlModel = createModel(scale(profile.bowl)); // your picks while bowling
+  // Dobby's own recent picks, so it can avoid being predictable itself.
+  const myBowls = [];
+  const myBats = [];
 
-  // Dobby bowls: you are batting, so forecast your batting pick and try to
-  // match it for the wicket. Mostly commits to the top read, occasionally
-  // gambles on the second guess so a sharp player cannot fully exploit it.
+  // Dobby bowls: you are batting, so forecast your batting pick and aim to match
+  // it for the wicket. It sharpens toward the prediction when it has a confident
+  // read and spreads out (near random) when it does not, and it avoids repeating
+  // its own recent deliveries so you cannot simply key off a pattern.
   function bowl() {
     const dist = batModel.forecast();
-    if (Math.random() < 0.15) return sampleFrom(dist);
-    return argmax(dist);
+    const conf = confidence(dist);
+    const scores = {};
+    NUMS.forEach((n) => {
+      // Want to bowl where you are likely to bat; discourage repeating our own
+      // recent balls.
+      scores[n] = dist[n] - 0.09 * selfRepeatPenalty(myBowls, n);
+    });
+    // Confident read -> low temperature (commit); flat read -> high temperature
+    // (spread), so early balls are not a fixed number.
+    const temp = 0.16 + (1 - conf) * 0.9;
+    const pick = softmaxSample(scores, temp);
+    myBowls.push(pick);
+    if (myBowls.length > 8) myBowls.shift();
+    return pick;
   }
 
   // Dobby bats: you are bowling, so forecast your bowling pick and steer away
-  // from it, while leaning toward higher scores among the safe options.
+  // from it while leaning toward higher scores, then sample so it is varied and
+  // never a predictable, repeated number.
   function bat() {
     const dist = bowlModel.forecast(); // chance you bowl each number
-    let best = NUMS[0];
-    let bestScore = -Infinity;
+    const conf = confidence(dist);
+    const scores = {};
     NUMS.forEach((n) => {
-      // Heavy penalty for numbers you are likely to bowl (risk of getting out),
-      // a mild bonus for scoring more runs.
-      const utility = -10 * dist[n] + 0.35 * n;
-      if (utility > bestScore) { bestScore = utility; best = n; }
+      const safety = 1 - dist[n]; // chance you do NOT bowl this number
+      // Safety dominates; a mild bonus for bigger runs; avoid our own repeats.
+      scores[n] = 3.2 * safety + 0.14 * (n / 6) - 0.5 * selfRepeatPenalty(myBats, n);
     });
-    // A small chance to deviate keeps Dobby from being perfectly predictable.
-    if (Math.random() < 0.12) {
-      const safe = NUMS.filter((n) => n !== argmax(dist));
-      return safe[Math.floor(Math.random() * safe.length)];
-    }
-    return best;
+    // When your bowling is predictable, sharpen (dodge hard); when it is not,
+    // stay varied rather than always defaulting to six.
+    const temp = 0.5 + (1 - conf) * 0.6;
+    const pick = softmaxSample(scores, temp);
+    myBats.push(pick);
+    if (myBats.length > 8) myBats.shift();
+    return pick;
   }
 
   // Record the number you actually played, in the given role ('bat' | 'bowl').
