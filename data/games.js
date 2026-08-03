@@ -15,6 +15,14 @@ export const games = [
     tagline: 'Bat, bowl, and take on Dobby with live commentary',
     type: 'web',
   },
+  {
+    id: 'accessible-chess',
+    title: 'Accessible Chess',
+    description:
+      'Chess you can play entirely by ear against Dobby, the computer. The board is a grid you move around with the arrow keys, and every square announces the piece on it and its coordinate, like "White pawn, e2". Pick up a piece to hear its legal moves, play it, and hear every capture, check, and result called aloud. Choose your colour, set Dobby\u2019s strength, and play from the keyboard alone.',
+    tagline: 'Play chess by ear, one square at a time',
+    type: 'web',
+  },
 ];
 
 export function getGame(id) {
