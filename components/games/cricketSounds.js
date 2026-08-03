@@ -191,6 +191,75 @@ function tie() {
     tone(ac, { start: i * 0.2, freq: f, type: 'triangle', dur: 0.55, gain: 0.18 }));
 }
 
+// ---------------------------------------------------------------------------
+// Ambient crowd bed: a low, continuous murmur that plays through the innings,
+// swells as the chase tightens, and ducks under the commentary so spoken lines
+// stay clear for screen-reader users.
+// ---------------------------------------------------------------------------
+
+let amb = null; // { src, gain, filter, base, ducked }
+
+function startAmbience() {
+  const ac = getCtx();
+  if (!ac || amb) return;
+  const dur = 2;
+  const frames = Math.floor(ac.sampleRate * dur);
+  const buf = ac.createBuffer(1, frames, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  // Brown-ish noise gives a soft, low rumble rather than a harsh hiss.
+  let last = 0;
+  for (let i = 0; i < frames; i += 1) {
+    const white = Math.random() * 2 - 1;
+    last = (last + 0.02 * white) / 1.02;
+    data[i] = last * 3.2;
+  }
+  const src = ac.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;
+  const filter = ac.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 520;
+  filter.Q.value = 0.4;
+  const gain = ac.createGain();
+  gain.gain.value = 0.0001;
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(master);
+  src.start();
+  amb = { src, gain, filter, base: 0.05, ducked: false };
+  gain.gain.exponentialRampToValueAtTime(0.05, ac.currentTime + 1.4); // gentle fade-in
+}
+
+function setTension(level) {
+  const ac = getCtx();
+  if (!amb || !ac) return;
+  const lvl = Math.max(0, Math.min(1, level));
+  amb.base = 0.05 + 0.07 * lvl; // louder crowd as the game heats up
+  amb.filter.frequency.setTargetAtTime(520 + 1100 * lvl, ac.currentTime, 0.6);
+  if (!amb.ducked) amb.gain.gain.setTargetAtTime(amb.base, ac.currentTime, 0.6);
+}
+
+function ambienceDuck(on) {
+  const ac = getCtx();
+  if (!amb || !ac) return;
+  amb.ducked = on;
+  const target = on ? amb.base * 0.35 : amb.base;
+  amb.gain.gain.setTargetAtTime(target, ac.currentTime, 0.08);
+}
+
+function stopAmbience() {
+  if (!amb) return;
+  const a = amb;
+  amb = null;
+  const ac = ctx;
+  if (ac) {
+    a.gain.gain.setTargetAtTime(0.0001, ac.currentTime, 0.3);
+    try { a.src.stop(ac.currentTime + 0.8); } catch (e) { /* already stopped */ }
+  } else {
+    try { a.src.stop(); } catch (e) { /* ignore */ }
+  }
+}
+
 // Prime/resume the audio context from within a user gesture (e.g. the Start
 // button) so the first real effect is not swallowed by an autoplay policy.
 function unlock() {
@@ -209,6 +278,10 @@ const sounds = {
   win,
   lose,
   tie,
+  startAmbience,
+  stopAmbience,
+  setTension,
+  ambienceDuck,
 };
 
 export default sounds;

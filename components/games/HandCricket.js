@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createCommentator, strings } from '../../data/handCricketCommentary';
 import sounds from './cricketSounds';
+import { createDobby } from './dobbyBrain';
 import styles from './games.module.css';
 
 const RATE_OPTIONS = [
@@ -13,8 +14,16 @@ const RATE_OPTIONS = [
 
 const RUN_EVENTS = ['', 'run1', 'run2', 'run3', 'run4', 'run5', 'run6'];
 
-function rand16() {
-  return Math.floor(Math.random() * 6) + 1;
+// How tense the moment is (0..1), used to swell the crowd ambience. Tension
+// rises as the chase closes in.
+function tensionLevel(inning, target, chasingScore) {
+  if (inning !== 2 || target == null) return 0.12;
+  const need = target - chasingScore;
+  if (need <= 2) return 1;
+  if (need <= 4) return 0.85;
+  if (need <= 6) return 0.7;
+  if (need <= 12) return 0.45;
+  return 0.2;
 }
 
 function voiceMatchesLang(v, lang) {
@@ -81,6 +90,7 @@ export default function HandCricket() {
   const rateRef = useRef(1.05);
   const speechOnRef = useRef(true);
   const commentatorRef = useRef(null);
+  const dobbyRef = useRef(null);
   const userPassedFiftyRef = useRef(false);
   const botPassedFiftyRef = useRef(false);
   const turnHeadingRef = useRef(null);
@@ -161,6 +171,10 @@ export default function HandCricket() {
     const chosen = synth.getVoices().find((v) => v.voiceURI === voiceURIRef.current);
     if (chosen) utter.voice = chosen;
     utter.rate = rateRef.current;
+    // Duck the crowd ambience while a line is spoken so it stays clear.
+    utter.onstart = () => sounds.ambienceDuck(true);
+    utter.onend = () => sounds.ambienceDuck(false);
+    utter.onerror = () => sounds.ambienceDuck(false);
     synth.speak(utter);
   }, []);
 
@@ -187,7 +201,16 @@ export default function HandCricket() {
     if (phase === 'result' && resultHeadingRef.current) resultHeadingRef.current.focus();
   }, [phase, inning, currentBatter]);
 
-  useEffect(() => () => { if (synthRef.current) synthRef.current.cancel(); }, []);
+  // Crowd ambience runs through the batting phase and stops elsewhere.
+  useEffect(() => {
+    if (phase === 'batting' && speechOnRef.current) sounds.startAmbience();
+    else sounds.stopAmbience();
+  }, [phase]);
+
+  useEffect(() => () => {
+    if (synthRef.current) synthRef.current.cancel();
+    sounds.stopAmbience();
+  }, []);
 
   function persist(key, value) {
     try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
@@ -203,6 +226,7 @@ export default function HandCricket() {
     userPassedFiftyRef.current = false;
     botPassedFiftyRef.current = false;
     commentatorRef.current = createCommentator(lang);
+    dobbyRef.current = createDobby();
   }
 
   function startMatch() {
@@ -298,9 +322,14 @@ export default function HandCricket() {
   function handlePick(n) {
     if (phase !== 'batting') return;
     const c = commentatorRef.current;
+    const dobby = dobbyRef.current;
     const batterIsUser = currentBatter === 'user';
     const userPick = n;
-    const botPick = rand16();
+    // Dobby forecasts your number before you reveal it: it matches while bowling
+    // to take your wicket, and dodges while batting to survive and score.
+    const botPick = batterIsUser ? dobby.bowl() : dobby.bat();
+    // Feed your actual pick back into Dobby so it keeps learning your habits.
+    dobby.record(batterIsUser ? 'bat' : 'bowl', userPick);
     const out = userPick === botPick;
 
     let newUser = userScore;
@@ -356,6 +385,7 @@ export default function HandCricket() {
 
     // Innings 2 (chase)
     const chasingScore = batterIsUser ? newUser : newBot;
+    if (!out && chasingScore < target) sfx('setTension', tensionLevel(2, target, chasingScore));
     if (chasingScore >= target) {
       finishMatch(newUser, newBot);
       return;
@@ -414,11 +444,14 @@ export default function HandCricket() {
     return (
       <div className={styles.game}>
         <p className={styles.instructions}>
-          Hand cricket, made for playing by ear. Win the toss, choose to bat or bowl, then on every
-          ball you and the bot each pick a number from one to six. If your numbers match, the batter
-          is out. Otherwise the batter scores their number. A rich commentary track, woven with
-          live crowd sound, bat-on-ball taps and stumps rattling, calls the action aloud. First to
-          defend or chase down the target wins.
+          Hand cricket, made for playing by ear. You take on <strong>Dobby</strong>, a mischievous
+          opponent who does not play at random: Dobby learns your habits and tries to read your next
+          move &mdash; matching your number to bowl you out, and dodging it to survive when batting.
+          Win the toss, choose to bat or bowl, then on every ball you and Dobby each pick a number
+          from one to six. If your numbers match, the batter is out. Otherwise the batter scores
+          their number. A rich commentary track, woven with live crowd sound, bat-on-ball taps and
+          stumps rattling, calls the action aloud. First to defend or chase down the target wins.
+          Can you out-think Dobby?
         </p>
         <p className={styles.recommend}>
           <strong>For the best experience</strong>, keep the commentary on and switch your screen
@@ -606,7 +639,7 @@ export default function HandCricket() {
         <p className={styles.commentary}>{commentaryLine}</p>
         <dl className={styles.metrics}>
           <div className={styles.metricRow}><dt>Your total</dt><dd>{result.userScore}</dd></div>
-          <div className={styles.metricRow}><dt>Opponent total</dt><dd>{result.botScore}</dd></div>
+          <div className={styles.metricRow}><dt>Dobby total</dt><dd>{result.botScore}</dd></div>
           <div className={styles.metricRow}><dt>Record</dt><dd>{stats.wins} won, {stats.losses} lost, {stats.ties} tied</dd></div>
         </dl>
         <p className={styles.meta}>Press <strong>S</strong> to play again, or <strong>Q</strong> to return to the menu.</p>

@@ -33,10 +33,10 @@ const en = {
     'Fortune smiles on you at the toss.',
   ],
   tossLose: [
-    'You lose the toss, and the opponent will bat first.',
-    'The coin betrays you this time. The bot takes first strike.',
+    'You lose the toss, and Dobby will bat first.',
+    'The coin betrays you this time. Dobby takes first strike.',
     'No luck at the toss. You are into the field first.',
-    'The opponent wins the toss and chooses to bat.',
+    'Dobby wins the toss and chooses to bat.',
     'Toss goes against you. Time to make an early breakthrough.',
   ],
   battingStart: [
@@ -195,12 +195,12 @@ const en = {
   lose: [
     'You have lost this one. It happens to the best.',
     'Defeat this time, but there is always the next match.',
-    'The opponent edges it. Dust yourself off and go again.',
+    'Dobby edges it. Dust yourself off and go again.',
     'Not your day, but the fight was there.',
     'You fall just short. Learn, reset, return.',
     'The match slips away. Chin up, champion.',
     'A loss to log, and lessons to take from it.',
-    'The bot takes the honours today. Your turn will come.',
+    'Dobby takes the honours today. Your turn will come.',
     'So close, yet the win eludes you this time.',
     'Beaten, but not broken. Come back stronger.',
   ],
@@ -239,11 +239,11 @@ const hi = {
     'सिक्का घूमा और आपकी झोली में गिरा, टॉस जीते!',
   ],
   tossLose: [
-    'टॉस हाथ से निकल गया, बॉट पहले बल्लेबाज़ी करेगा।',
+    'टॉस हाथ से निकल गया, डॉबी पहले बल्लेबाज़ी करेगा।',
     'सिक्के ने दग़ा दे दिया, अब गेंद आपके हाथ।',
-    'टॉस बॉट के नाम, पहले फ़ील्डिंग आपकी।',
-    'क़िस्मत ने पलटी मारी, बॉट बैटिंग पर आ गया।',
-    'इस बार सिक्का बॉट का यार निकला, पहले वो बल्लेबाज़ी करेगा।',
+    'टॉस डॉबी के नाम, पहले फ़ील्डिंग आपकी।',
+    'क़िस्मत ने पलटी मारी, डॉबी बैटिंग पर आ गया।',
+    'इस बार सिक्का डॉबी का यार निकला, पहले वो बल्लेबाज़ी करेगा।',
   ],
   battingStart: [
     'बल्ला उठाइए, मैदान में उतरिए, पारी शुरू!',
@@ -365,7 +365,7 @@ const hi = {
   lose: [
     'इस बार हार गए, कोई बात नहीं।',
     'हार भी खेल का हिस्सा है, अगली बार सही।',
-    'बॉट बाज़ी मार गया, फिर मिलेंगे मैदान में।',
+    'डॉबी बाज़ी मार गया, फिर मिलेंगे मैदान में।',
     'क़िस्मत आज साथ नहीं, हिम्मत बनाए रखिए।',
     'थोड़े से रह गए, अगली बार पक्का जीतेंगे।',
     'हार मानी नहीं जाती, वापसी ज़रूर करेंगे!',
@@ -400,38 +400,38 @@ export const strings = {
     bowlFirst: 'You are bowling first.',
     choseBat: 'You chose to bat first.',
     choseBowl: 'You chose to bowl first.',
-    toOpponent: ' to the opponent',
+    toOpponent: ' to Dobby',
     yourTotal: (t) => `Your total is ${t}.`,
-    oppTotal: (t) => `Opponent total is ${t}.`,
+    oppTotal: (t) => `Dobby's total is ${t}.`,
     needToWin: (n) => `Need ${n} more to win.`,
     scoreReport: ({ userScore, botScore, target, currentBatter }) => {
       if (target == null) {
         return currentBatter === 'user'
           ? `You are batting and have scored ${userScore}.`
-          : `You are bowling. The opponent has scored ${botScore}.`;
+          : `You are bowling. Dobby has scored ${botScore}.`;
       }
       if (currentBatter === 'user') {
         const need = Math.max(target - userScore, 0);
         return `Chasing ${target}. Your score is ${userScore}, you need ${need} more to win.`;
       }
       const need = Math.max(target - botScore, 0);
-      return `Defending ${target}. The opponent has ${botScore} and needs ${need} more.`;
+      return `Defending ${target}. Dobby has ${botScore} and needs ${need} more.`;
     },
     outDismissed: (s) => `Out! You are dismissed on ${s}.`,
-    outBowled: (s) => `Out! You bowled them out on ${s}.`,
+    outBowled: (s) => `Out! You bowled Dobby out on ${s}.`,
     targetIs: (t) => `The target is ${t}.`,
-    matchOverPrefix: (u, b) => `Match over. Your total ${u}, opponent ${b}.`,
+    matchOverPrefix: (u, b) => `Match over. Your total ${u}, Dobby ${b}.`,
     playAgainPrompt: 'Press S to play again, or Q to return to the menu.',
     winChase: 'You chased down the target. You win!',
     winDefend: (m) => `You defended your total and win by ${m} ${m === 1 ? 'run' : 'runs'}.`,
     loseChase: (m) => `You fell short by ${m} ${m === 1 ? 'run' : 'runs'}. You lose.`,
-    loseDefend: 'The opponent chased down your total. You lose.',
+    loseDefend: 'Dobby chased down your total. You lose.',
     tieResult: 'The scores are level. It is a tie!',
     battingTurn: 'You are batting. Play a number from one to six to take your shot.',
     bowlingTurn: 'You are bowling. Play a number from one to six to bowl your delivery.',
     labelInnings: 'Innings',
     labelYourScore: 'Your score',
-    labelOpponent: 'Opponent',
+    labelOpponent: 'Dobby',
     labelTarget: 'Target',
     tipKeys: 'Tip: press the number keys 1 to 6 to play, or M any time to hear the score.',
   },
@@ -446,38 +446,38 @@ export const strings = {
     bowlFirst: 'पहले आप गेंदबाज़ी करेंगे।',
     choseBat: 'आपने पहले बल्लेबाज़ी चुनी।',
     choseBowl: 'आपने पहले गेंदबाज़ी चुनी।',
-    toOpponent: ', बॉट के नाम',
+    toOpponent: ', डॉबी के नाम',
     yourTotal: (t) => `आपका स्कोर ${t}।`,
-    oppTotal: (t) => `बॉट का स्कोर ${t}।`,
+    oppTotal: (t) => `डॉबी का स्कोर ${t}।`,
     needToWin: (n) => `जीत के लिए ${n} रन और चाहिए।`,
     scoreReport: ({ userScore, botScore, target, currentBatter }) => {
       if (target == null) {
         return currentBatter === 'user'
           ? `आप बल्लेबाज़ी कर रहे हैं, अब तक ${userScore} रन।`
-          : `आप गेंदबाज़ी कर रहे हैं, बॉट ने ${botScore} रन बनाए हैं।`;
+          : `आप गेंदबाज़ी कर रहे हैं, डॉबी ने ${botScore} रन बनाए हैं।`;
       }
       if (currentBatter === 'user') {
         const need = Math.max(target - userScore, 0);
         return `लक्ष्य ${target}। आपके ${userScore} रन, जीत के लिए ${need} रन और चाहिए।`;
       }
       const need = Math.max(target - botScore, 0);
-      return `लक्ष्य ${target}। बॉट के ${botScore} रन, उसे ${need} रन और चाहिए।`;
+      return `लक्ष्य ${target}। डॉबी के ${botScore} रन, उसे ${need} रन और चाहिए।`;
     },
     outDismissed: (s) => `आउट! आप ${s} रन पर आउट हो गए।`,
-    outBowled: (s) => `आउट! आपने बॉट को ${s} रन पर आउट कर दिया।`,
+    outBowled: (s) => `आउट! आपने डॉबी को ${s} रन पर आउट कर दिया।`,
     targetIs: (t) => `लक्ष्य है ${t}।`,
-    matchOverPrefix: (u, b) => `मैच ख़त्म। आपका स्कोर ${u}, बॉट का ${b}।`,
+    matchOverPrefix: (u, b) => `मैच ख़त्म। आपका स्कोर ${u}, डॉबी का ${b}।`,
     playAgainPrompt: 'दोबारा खेलने के लिए एस, या मेन्यू के लिए क्यू दबाइए।',
     winChase: 'आपने लक्ष्य हासिल कर लिया। आप जीत गए!',
     winDefend: (m) => `आपने अपना स्कोर बचा लिया, ${m} रन से जीत।`,
     loseChase: (m) => `आप ${m} रन से पीछे रह गए। आप हार गए।`,
-    loseDefend: 'बॉट ने लक्ष्य हासिल कर लिया। आप हार गए।',
+    loseDefend: 'डॉबी ने लक्ष्य हासिल कर लिया। आप हार गए।',
     tieResult: 'स्कोर बराबर। मुक़ाबला टाई!',
     battingTurn: 'आप बल्लेबाज़ी कर रहे हैं। शॉट के लिए एक से छह तक नंबर दबाइए।',
     bowlingTurn: 'आप गेंदबाज़ी कर रहे हैं। गेंद के लिए एक से छह तक नंबर दबाइए।',
     labelInnings: 'पारी',
     labelYourScore: 'आपका स्कोर',
-    labelOpponent: 'बॉट',
+    labelOpponent: 'डॉबी',
     labelTarget: 'लक्ष्य',
     tipKeys: 'सुझाव: खेलने के लिए 1 से 6 तक नंबर कुंजियाँ, या स्कोर सुनने के लिए एम दबाइए।',
   },
