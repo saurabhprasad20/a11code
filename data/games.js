@@ -11,8 +11,8 @@ export const games = [
     id: 'hand-cricket',
     title: 'Hand Cricket',
     description:
-      'The classic hand cricket game, reimagined to be played entirely by ear. Win the toss, choose to bat or bowl, and pick a number from one to six each ball against Dobby, a clever opponent who learns your habits and tries to read your next move. A lively commentary track in English or Hindi calls every run, wicket, and milestone aloud, wrapped in live crowd sound, with your own choice of voice and speed. Keyboard-first, screen-reader-first, and it remembers your wins.',
-    tagline: 'Bat, bowl, and out-think Dobby with live commentary',
+      'The classic hand cricket game, reimagined to be played entirely by ear. Win the toss, choose to bat or bowl, and pick a number from one to six each ball against Dobby, a mischievous and clever opponent who always gives you a proper contest. A lively commentary track in English or Hindi calls every run, wicket, and milestone aloud, wrapped in live crowd sound, with your own choice of voice and speed. Keyboard-first, screen-reader-first, and it remembers your wins.',
+    tagline: 'Bat, bowl, and take on Dobby with live commentary',
     type: 'web',
   },
 ];

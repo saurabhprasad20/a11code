@@ -445,13 +445,11 @@ export default function HandCricket() {
       <div className={styles.game}>
         <p className={styles.instructions}>
           Hand cricket, made for playing by ear. You take on <strong>Dobby</strong>, a mischievous
-          opponent who does not play at random: Dobby learns your habits and tries to read your next
-          move &mdash; matching your number to bowl you out, and dodging it to survive when batting.
-          Win the toss, choose to bat or bowl, then on every ball you and Dobby each pick a number
-          from one to six. If your numbers match, the batter is out. Otherwise the batter scores
-          their number. A rich commentary track, woven with live crowd sound, bat-on-ball taps and
-          stumps rattling, calls the action aloud. First to defend or chase down the target wins.
-          Can you out-think Dobby?
+          and clever opponent who is always up for a proper contest. Win the toss, choose to bat or
+          bowl, then on every ball you and Dobby each pick a number from one to six. If your numbers
+          match, the batter is out. Otherwise the batter scores their number. A rich commentary
+          track, woven with live crowd sound, bat-on-ball taps and stumps rattling, calls the action
+          aloud. First to defend or chase down the target wins. Can you get the better of Dobby?
         </p>
         <p className={styles.recommend}>
           <strong>For the best experience</strong>, keep the commentary on and switch your screen
