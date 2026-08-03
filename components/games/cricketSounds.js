@@ -260,6 +260,33 @@ function stopAmbience() {
   }
 }
 
+// An escalating musical flourish for a run of boundaries. The more consecutive
+// boundaries, and the bigger the value, the brighter and longer the flourish,
+// layered on top of the normal boundary roar.
+function streak(count, value) {
+  const ac = getCtx();
+  if (!ac) return;
+  const steps = Math.min(count, 6);
+  // Base note climbs with the boundary value (4/5/6) and each extra boundary in
+  // the streak stacks another rising note.
+  const root = value >= 6 ? 523 : value === 5 ? 466 : 415;
+  const ratios = [1, 1.25, 1.5, 1.875, 2.25, 3];
+  for (let i = 0; i < steps; i += 1) {
+    tone(ac, {
+      start: i * 0.07,
+      freq: root * ratios[i],
+      type: 'triangle',
+      dur: 0.32,
+      gain: 0.16,
+    });
+  }
+  // A shimmer on top that grows with the streak length.
+  if (count >= 3) {
+    tone(ac, { start: 0.1, freq: root * 4, type: 'sine', dur: 0.5, gain: 0.12 });
+    noiseBurst(ac, { start: 0.05, dur: 0.7, gain: 0.06, type: 'highpass', freq: 4000, attack: 0.4 });
+  }
+}
+
 // Prime/resume the audio context from within a user gesture (e.g. the Start
 // button) so the first real effect is not swallowed by an autoplay policy.
 function unlock() {
@@ -275,6 +302,7 @@ const sounds = {
   welcome,
   fifty,
   pressure,
+  streak,
   win,
   lose,
   tie,

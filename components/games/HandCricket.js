@@ -73,12 +73,16 @@ export default function HandCricket() {
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState({ wins: 0, losses: 0, ties: 0, highest: 0, played: 0 });
 
+  const [wickets, setWickets] = useState(11);
+
   // Match state
   const [battingFirst, setBattingFirst] = useState('user'); // 'user' | 'bot'
   const [currentBatter, setCurrentBatter] = useState('user');
   const [inning, setInning] = useState(1);
   const [userScore, setUserScore] = useState(0);
   const [botScore, setBotScore] = useState(0);
+  const [userWkts, setUserWkts] = useState(0);
+  const [botWkts, setBotWkts] = useState(0);
   const [target, setTarget] = useState(null);
   const [lastPlay, setLastPlay] = useState(null); // { userPick, botPick, out, runs }
   const [result, setResult] = useState(null);
@@ -91,6 +95,8 @@ export default function HandCricket() {
   const speechOnRef = useRef(true);
   const commentatorRef = useRef(null);
   const dobbyRef = useRef(null);
+  // Tracks a run of identical boundaries by the current batter for streak calls.
+  const streakRef = useRef({ value: null, count: 0 });
   const userPassedFiftyRef = useRef(false);
   const botPassedFiftyRef = useRef(false);
   const turnHeadingRef = useRef(null);
@@ -120,6 +126,8 @@ export default function HandCricket() {
       savedSpeech = localStorage.getItem('hcSpeech');
       const l = localStorage.getItem('hcLang');
       if (l === 'hi' || l === 'en') savedLang = l;
+      const wk = parseInt(localStorage.getItem('hcWickets'), 10);
+      if (wk >= 1 && wk <= 11) setWickets(wk);
     } catch (e) { /* ignore */ }
     if (savedRate && !Number.isNaN(savedRate)) setRate(savedRate);
     if (savedSpeech === 'off') setSpeechOn(false);
@@ -196,6 +204,14 @@ export default function HandCricket() {
     if (fn) fn(...args);
   }, []);
 
+  // Occasionally pull a Dobby taunt from the given pool. Returns a leading-space
+  // string to append to an announcement, or '' when it does not fire.
+  function taunt(event, prob) {
+    if (Math.random() > prob) return '';
+    const line = commentatorRef.current ? commentatorRef.current(event) : '';
+    return line ? ` ${line}` : '';
+  }
+
   useEffect(() => {
     if (phase === 'batting' && turnHeadingRef.current) turnHeadingRef.current.focus();
     if (phase === 'result' && resultHeadingRef.current) resultHeadingRef.current.focus();
@@ -220,11 +236,14 @@ export default function HandCricket() {
     setInning(1);
     setUserScore(0);
     setBotScore(0);
+    setUserWkts(0);
+    setBotWkts(0);
     setTarget(null);
     setLastPlay(null);
     setResult(null);
     userPassedFiftyRef.current = false;
     botPassedFiftyRef.current = false;
+    streakRef.current = { value: null, count: 0 };
     commentatorRef.current = createCommentator(lang);
     dobbyRef.current = createDobby();
   }
@@ -235,6 +254,7 @@ export default function HandCricket() {
     persist('hcRate', String(rate));
     persist('hcSpeech', speechOn ? 'on' : 'off');
     persist('hcLang', lang);
+    persist('hcWickets', String(wickets));
     setPhase('toss');
     const c = commentatorRef.current;
     const opener = `${c('matchStart')} ${S.tossTime}`;
@@ -313,10 +333,12 @@ export default function HandCricket() {
 
     let line = c(outcome);
     if (outcome !== 'tie' && margin > 0 && margin <= 3) line = `${line} ${c('closeFinish')}`;
+    // Dobby gets a little gloat when it beats you.
+    const gloat = outcome === 'lose' ? taunt('tauntWin', 0.7) : '';
     setCommentaryLine(line);
     setPhase('result');
     sfx(outcome); // win / lose / tie closing sound
-    announce(`${S.matchOverPrefix(finalUser, finalBot)} ${sentence} ${line} ${S.playAgainPrompt}`);
+    announce(`${S.matchOverPrefix(finalUser, finalBot)} ${sentence} ${line}${gloat} ${S.playAgainPrompt}`);
   }
 
   function handlePick(n) {
@@ -343,12 +365,35 @@ export default function HandCricket() {
     setBotScore(newBot);
     setLastPlay({ userPick, botPick, out, runs, batterIsUser });
 
-    // Ball sound: the shot for runs (with a crowd roar on a boundary), or the
-    // clatter of stumps for a wicket. A terminal wicket in the chase is left to
-    // the closing stinger in finishMatch so the sounds do not collide.
+    // Track wickets. The same batter keeps going after a wicket until all of
+    // their wickets are gone (multi-wicket format).
+    const wktsFallenPrev = batterIsUser ? userWkts : botWkts;
+    const wktsFallen = out ? wktsFallenPrev + 1 : wktsFallenPrev;
+    if (out) {
+      if (batterIsUser) setUserWkts(wktsFallen);
+      else setBotWkts(wktsFallen);
+    }
+    const allOut = out && wktsFallen >= wickets;
+
+    // Boundary-streak tracking: consecutive identical boundaries by this batter.
+    let streakLine = '';
+    if (out || runs < 4) {
+      streakRef.current = { value: null, count: 0 };
+    } else {
+      const s = streakRef.current;
+      if (s.value === runs) s.count += 1;
+      else { s.value = runs; s.count = 1; }
+      if (s.count === 2) streakLine = ` ${c(`streak2_${runs}`)}`;
+      else if (s.count >= 3) streakLine = ` ${c(`streak3_${runs}`)}`;
+    }
+
+    // Ball sound: the shot for runs (with a crowd roar on a boundary, and an
+    // escalating flourish for a streak), or the clatter of stumps for a wicket.
+    // A terminal wicket in the chase is left to the closing stinger.
     if (!out) {
       sfx('runTap', runs);
       if (runs >= 4) sfx('boundary', runs);
+      if (streakLine) sfx('streak', streakRef.current.count, runs);
     }
 
     // Milestone: fifty
@@ -363,22 +408,35 @@ export default function HandCricket() {
     }
     if (fiftyLine) sfx('fifty');
 
+    // Dobby's mischief: a taunt when it dismisses you, or when it smashes a six.
+    const wicketTaunt = out && batterIsUser ? taunt('tauntWicket', 0.6) : '';
+    const runTaunt = !out && !batterIsUser && runs === 6
+      ? taunt('tauntSix', 0.55)
+      : (!out ? taunt('tauntBanter', 0.12) : '');
+
     if (inning === 1) {
       if (out) {
         sfx('wicket');
-        const firstScore = batterIsUser ? newUser : newBot;
-        const newTarget = firstScore + 1;
-        setTarget(newTarget);
-        setInning(2);
-        setCurrentBatter(batterIsUser ? 'bot' : 'user');
-        const outText = batterIsUser ? S.outDismissed(newUser) : S.outBowled(newBot);
-        const nextRole = batterIsUser ? c('bowlingStart') : c('battingStart');
-        setCommentaryLine(`${c('out')} ${c('inningsBreak')}`);
-        announce(`${outText} ${S.targetIs(newTarget)} ${c('out')} ${c('inningsBreak')} ${nextRole} ${S.firstBall}`);
+        const score = batterIsUser ? newUser : newBot;
+        if (allOut) {
+          const newTarget = score + 1;
+          setTarget(newTarget);
+          setInning(2);
+          setCurrentBatter(batterIsUser ? 'bot' : 'user');
+          streakRef.current = { value: null, count: 0 };
+          const outText = S.allOut({ score, batterIsUser });
+          const nextRole = batterIsUser ? c('bowlingStart') : c('battingStart');
+          setCommentaryLine(`${c('out')} ${c('inningsBreak')}`);
+          announce(`${outText}${wicketTaunt} ${S.targetIs(newTarget)} ${c('inningsBreak')} ${nextRole} ${S.firstBall}`);
+        } else {
+          const wLine = S.wicketFall({ down: wktsFallen, wickets, score, batterIsUser });
+          setCommentaryLine(c('out'));
+          announce(`${wLine}${wicketTaunt} ${c('out')} ${S.nextBall}`);
+        }
       } else {
         const runLine = c(RUN_EVENTS[runs]);
-        setCommentaryLine(runLine + fiftyLine);
-        announce(`${runLine}${fiftyLine} ${S.nextBall}`);
+        setCommentaryLine(runLine + fiftyLine + streakLine);
+        announce(`${runLine}${fiftyLine}${streakLine}${runTaunt} ${S.nextBall}`);
       }
       return;
     }
@@ -391,19 +449,29 @@ export default function HandCricket() {
       return;
     }
     if (out) {
-      finishMatch(newUser, newBot);
+      sfx('wicket');
+      if (allOut) {
+        finishMatch(newUser, newBot);
+        return;
+      }
+      const score = batterIsUser ? newUser : newBot;
+      const wLine = S.wicketFall({ down: wktsFallen, wickets, score, batterIsUser });
+      const needAfter = target - chasingScore;
+      const pressure = needAfter <= 6 ? ` ${c('chasePressure')}` : '';
+      setCommentaryLine(c('out'));
+      announce(`${wLine}${wicketTaunt} ${c('out')}${pressure} ${S.nextBall}`);
       return;
     }
     const need = target - chasingScore;
     const runLine = c(RUN_EVENTS[runs]);
     let pressure = '';
     if (need <= 6) { pressure = ` ${c('chasePressure')}`; sfx('pressure'); }
-    setCommentaryLine(runLine + fiftyLine);
-    announce(`${runLine}${fiftyLine}${pressure} ${S.nextBall}`);
+    setCommentaryLine(runLine + fiftyLine + streakLine);
+    announce(`${runLine}${fiftyLine}${streakLine}${pressure}${runTaunt} ${S.nextBall}`);
   }
 
   function reportScore() {
-    announce(S.scoreReport({ userScore, botScore, target, currentBatter }));
+    announce(S.scoreReport({ userScore, botScore, target, currentBatter, userWkts, botWkts, wickets }));
   }
 
   // Global number-key input during batting (keyboard + numpad), no navigation needed.
@@ -445,11 +513,13 @@ export default function HandCricket() {
       <div className={styles.game}>
         <p className={styles.instructions}>
           Hand cricket, made for playing by ear. You take on <strong>Dobby</strong>, a mischievous
-          and clever opponent who is always up for a proper contest. Win the toss, choose to bat or
-          bowl, then on every ball you and Dobby each pick a number from one to six. If your numbers
-          match, the batter is out. Otherwise the batter scores their number. A rich commentary
-          track, woven with live crowd sound, bat-on-ball taps and stumps rattling, calls the action
-          aloud. First to defend or chase down the target wins. Can you get the better of Dobby?
+          and clever opponent who is always up for a proper contest. Choose how many wickets each
+          side gets, from one to eleven. Win the toss, choose to bat or bowl, then on every ball you
+          and Dobby each pick a number from one to six. If your numbers match, the batter loses a
+          wicket; bat on until all your wickets are gone. Otherwise the batter scores their number.
+          A rich commentary track, woven with live crowd sound, bat-on-ball taps and stumps
+          rattling, calls the action aloud. First to defend or chase down the target wins. Can you
+          get the better of Dobby?
         </p>
         <p className={styles.recommend}>
           <strong>For the best experience</strong>, keep the commentary on and switch your screen
@@ -496,6 +566,21 @@ export default function HandCricket() {
                   onChange={() => setLang('hi')} />
                 <span>{'\u0939\u093F\u0928\u094D\u0926\u0940'} (Hindi)</span>
               </label>
+            </div>
+          </fieldset>
+
+          <fieldset className={styles.fieldset}>
+            <legend className={styles.legend}>Wickets per side</legend>
+            <div className={styles.field} style={{ marginTop: 0 }}>
+              <label htmlFor="hc-wickets">
+                How many wickets? You and Dobby each get the same number.
+              </label>
+              <select id="hc-wickets" className={styles.input} value={wickets}
+                onChange={(e) => setWickets(parseInt(e.target.value, 10))}>
+                {Array.from({ length: 11 }, (_, i) => i + 1).map((w) => (
+                  <option key={w} value={w}>{w === 1 ? '1 wicket' : `${w} wickets`}{w === 11 ? ' (full team)' : ''}</option>
+                ))}
+              </select>
             </div>
           </fieldset>
 
@@ -592,8 +677,9 @@ export default function HandCricket() {
         <div className={styles.panel}>
           <div className={styles.scoreboard}>
             <div><span className={styles.scoreLabel}>{S.labelInnings}</span><span className={styles.scoreValue}>{inning} / 2</span></div>
-            <div><span className={styles.scoreLabel}>{S.labelYourScore}</span><span className={styles.scoreValue}>{userScore}</span></div>
-            <div><span className={styles.scoreLabel}>{S.labelOpponent}</span><span className={styles.scoreValue}>{botScore}</span></div>
+            <div><span className={styles.scoreLabel}>{S.labelYourScore}</span><span className={styles.scoreValue}>{userScore} / {userWkts}</span></div>
+            <div><span className={styles.scoreLabel}>{S.labelOpponent}</span><span className={styles.scoreValue}>{botScore} / {botWkts}</span></div>
+            <div><span className={styles.scoreLabel}>{S.labelWickets}</span><span className={styles.scoreValue}>{wickets} each</span></div>
             {target !== null && (
               <div><span className={styles.scoreLabel}>{S.labelTarget}</span><span className={styles.scoreValue}>{target}</span></div>
             )}
