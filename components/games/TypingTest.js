@@ -212,7 +212,7 @@ export default function TypingTest() {
     setIsNewBest(false);
     setTimeLeft(level.durationSeconds);
     setAssertiveMsg('');
-    setPoliteMsg('Test started. Listen and type. Press Enter after each item. Press Control plus Space to repeat.');
+    setPoliteMsg(`Test started. Listen and type. Press ${level.unit === 'word' ? 'Enter or Space' : 'Enter'} after each item. Press Control plus Space to repeat.`);
     setPhase('running');
     // Speak the first prompt shortly after the UI updates.
     setTimeout(() => speak(queue[0]), 350);
@@ -229,13 +229,20 @@ export default function TypingTest() {
   }
 
   function handleKeyDown(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      if (typed.trim().length > 0) submitCurrent();
-    } else if (event.ctrlKey && (event.code === 'Space' || event.key === ' ')) {
+    // On the easy level every item is a single word, so Space is a natural way
+    // to submit and move on, in addition to Enter. On medium and hard the items
+    // are sentences that contain spaces, so only Enter submits there.
+    const wordLevel = typingLevels[levelId].unit === 'word';
+    if (event.ctrlKey && (event.code === 'Space' || event.key === ' ')) {
       event.preventDefault();
       speak(promptRef.current);
       setPoliteMsg('Repeating the current item.');
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (typed.trim().length > 0) submitCurrent();
+    } else if (wordLevel && (event.code === 'Space' || event.key === ' ')) {
+      event.preventDefault();
+      if (typed.trim().length > 0) submitCurrent();
     }
   }
 
@@ -362,7 +369,9 @@ export default function TypingTest() {
           <p className={styles.target} aria-hidden={supported ? 'true' : undefined}>{currentPrompt}</p>
 
           <div className={styles.field}>
-            <label htmlFor="typing-input">Type what you hear, then press Enter</label>
+            <label htmlFor="typing-input">
+              Type what you hear, then press {typingLevels[levelId].unit === 'word' ? 'Enter or Space' : 'Enter'}
+            </label>
             <textarea
               id="typing-input"
               ref={inputRef}
@@ -378,8 +387,8 @@ export default function TypingTest() {
               aria-describedby="typing-help"
             />
             <p id="typing-help" className={styles.meta}>
-              Press Enter to submit and hear the next item. Press Control plus Space to repeat the
-              current item.
+              Press {typingLevels[levelId].unit === 'word' ? 'Enter or Space' : 'Enter'} to submit and
+              hear the next item. Press Control plus Space to repeat the current item.
             </p>
           </div>
 
