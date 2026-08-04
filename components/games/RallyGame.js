@@ -47,7 +47,7 @@ export default function RallyGame() {
   const ball = useRef({ active: false });
   const playerLaneRef = useRef(4);
   const botLaneRef = useRef(4);
-  const swungRef = useRef(false);
+  const lastSwingRef = useRef(0);
   const botResolvedRef = useRef(false);
   const rafRef = useRef(null);
   const lastTsRef = useRef(0);
@@ -143,10 +143,9 @@ export default function RallyGame() {
       spinRate,
       paceApplied: false,
       quality: 0,
-      playerFailed: null,
       botFailed: null,
     };
-    swungRef.current = false;
+    lastSwingRef.current = 0;
     botResolvedRef.current = false;
     lastBeepRef.current = 0;
     sounds.serveCue();
@@ -159,8 +158,10 @@ export default function RallyGame() {
     serveTimerRef.current = window.setTimeout(() => { serve(); }, delay);
   }, [serve]);
 
-  // A point has ended. `loser` is 'player' or 'bot'.
-  const resolvePoint = useCallback((loser, reason) => {
+  // A point has ended. `loser` is 'player' or 'bot'. A point is lost only by the
+  // ball reaching that player's baseline unreturned — there are no sideways or
+  // early penalties.
+  const resolvePoint = useCallback((loser) => {
     const b = ball.current;
     const lane = b.laneFloat;
     b.active = false;
@@ -174,11 +175,7 @@ export default function RallyGame() {
       const next = playerScoreRef.current - 1;
       playerScoreRef.current = next;
       setPlayerScore(next);
-      const msg = reason === 'sideways'
-        ? 'Edged it! Off the side of the bat. You lose a chance.'
-        : (reason === 'early' ? 'Too early! You swung before it arrived. You lose a chance.'
-          : 'Missed! It beat your bat. You lose a chance.');
-      announce(`${msg} Score, you ${next}, Dobby ${botScoreRef.current}.`);
+      announce(`Missed! It got past your bat. You lose a chance. Score, you ${next}, Dobby ${botScoreRef.current}.`);
       if (next <= 0) { endGame(false); return; }
     } else {
       // The ball beat Dobby and crashed at his end.
@@ -187,10 +184,7 @@ export default function RallyGame() {
       const next = botScoreRef.current - 1;
       botScoreRef.current = next;
       setBotScore(next);
-      const msg = reason === 'sideways'
-        ? 'Past Dobby! He got an edge but could not stop it. You win a chance.'
-        : 'Past Dobby! He could not reach it. You win a chance.';
-      announce(`${msg} Score, you ${playerScoreRef.current}, Dobby ${next}.`);
+      announce(`Past Dobby! He could not reach it. You win a chance. Score, you ${playerScoreRef.current}, Dobby ${next}.`);
       if (next <= 0) { endGame(true); return; }
     }
     scheduleServe(1400);
@@ -214,30 +208,32 @@ export default function RallyGame() {
       b.y = BOT_ZONE;
       b.speed = lvl.ballSpeed * (1 + Math.random() * 0.3 * lvl.trick);
       b.paceApplied = false;
-      b.playerFailed = null;
+      lastSwingRef.current = 0;
       const roll = Math.random();
       b.type = roll < 0.3 * lvl.trick ? 'pace' : (roll < 0.6 * lvl.trick ? 'spin' : 'straight');
       b.spinRate = b.type === 'spin' ? (Math.random() < 0.5 ? -1 : 1) * (0.6 + lvl.trick * 0.9) : 0;
-      swungRef.current = false;
       lastBeepRef.current = 0;
     } else {
       // Dobby has beaten it; let the ball run on to his baseline before the
-      // point is awarded.
-      b.botFailed = reached ? 'sideways' : 'miss';
-      if (b.botFailed === 'sideways') sounds.edge(b.laneFloat);
+      // point is awarded, so you hear it complete the trip.
+      b.botFailed = 'miss';
     }
   }
 
-  // The player swings. A clean, aligned, in-zone hit sends the ball back up.
-  // Any other swing is a failed shot: the ball keeps coming and the point is
-  // decided when it passes your baseline, so the trip is always heard in full.
+  // The player swings. You can swing as often as you like as the ball comes;
+  // a swing succeeds only when the ball is in your zone AND your bat is in its
+  // lane, in which case it always goes back to Dobby. A swing that connects with
+  // nothing is a harmless whiff with no penalty. You only lose the point if the
+  // ball reaches your baseline without a successful hit.
   const swing = useCallback(() => {
     const b = ball.current;
-    if (phaseRef.current !== 'playing' || !b.active || b.dir !== 'down' || swungRef.current) return;
-    swungRef.current = true;
+    if (phaseRef.current !== 'playing' || !b.active || b.dir !== 'down') return;
+    const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    if (now - lastSwingRef.current < 130) return; // debounce key auto-repeat
+    lastSwingRef.current = now;
     const inZone = b.y <= PLAYER_ZONE;
-    const laneDiff = Math.abs(playerLaneRef.current - Math.round(b.laneFloat));
-    if (inZone && laneDiff === 0) {
+    const aligned = Math.round(b.laneFloat) === playerLaneRef.current;
+    if (inZone && aligned) {
       const quality = 1 - b.y / PLAYER_ZONE; // near the baseline = better timed
       b.quality = quality;
       sounds.takPlayer(b.laneFloat);
@@ -249,12 +245,8 @@ export default function RallyGame() {
       botResolvedRef.current = false;
       announce(quality > 0.6 ? 'Sweetly timed! Back to Dobby.' : 'Good return! Back to Dobby.');
     } else {
-      // A failed swing: the ball keeps coming and the miss is announced when it
-      // passes your baseline, so you hear it complete the trip.
-      const reason = inZone ? (laneDiff === 1 ? 'sideways' : 'miss') : 'early';
-      b.playerFailed = reason;
-      if (reason === 'sideways') sounds.edge(b.laneFloat);
-      else sounds.whiff(b.laneFloat);
+      // Missed the ball this time — no penalty, swing again as it comes.
+      sounds.whiff(b.laneFloat);
     }
   }, [announce]);
 
@@ -307,16 +299,16 @@ export default function RallyGame() {
       updateLock();
 
       // Boundary outcomes. The ball always travels the full court before a
-      // point is awarded, so both directions are heard in sync.
+      // point is awarded, so both directions are heard in sync. You lose only
+      // if the ball reaches your baseline unreturned; Dobby loses only if it
+      // reaches his.
       if (b.dir === 'down' && b.y <= 0) {
-        // Reached your baseline: a clean hit would already have reversed it, so
-        // arriving here means you did not return it.
-        resolvePoint('player', b.playerFailed || 'miss');
+        resolvePoint('player');
       } else if (b.dir === 'up') {
         if (b.y >= BOT_ZONE && !botResolvedRef.current) {
           botAttempt();
         } else if (b.y >= 1 && botResolvedRef.current && b.botFailed) {
-          resolvePoint('bot', b.botFailed);
+          resolvePoint('bot');
         }
       }
       paintBall();
@@ -441,11 +433,12 @@ export default function RallyGame() {
           back to Dobby with a sharp knock.
         </p>
         <p className={styles.recommend}>
-          <strong>Keys:</strong> left and right arrows move your bat; up arrow or space hits; press
-          <strong> M</strong> any time to hear the score and where the ball is. Miss the ball, mistime
-          it, or catch it off the edge and you lose a chance. Do the same to Dobby and it loses one.
-          You each start with ten chances; the first down to zero loses. Watch out for pace balls
-          that suddenly speed up and spin balls that drift sideways.
+          <strong>Keys:</strong> left and right arrows move your bat; up arrow or space hits &mdash;
+          you can swing as many times as you like as the ball comes in, so keep trying until you
+          connect; press <strong>M</strong> any time to hear the score and where the ball is. If the
+          ball gets past your bat to the bottom, you lose a chance; get it past Dobby at the top and
+          he loses one. You each start with ten chances; the first down to zero loses. Watch out for
+          pace balls that suddenly speed up and spin balls that drift across the lanes.
         </p>
         <p className={styles.recommend}>
           <strong>For the best experience</strong>, use headphones (the left-to-right sound is how
