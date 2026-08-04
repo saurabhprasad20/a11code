@@ -383,7 +383,10 @@ export default function RallyGame() {
     setPlayerLane((prev) => {
       const next = Math.max(0, Math.min(LANES - 1, prev + delta));
       playerLaneRef.current = next;
-      if (next !== prev) { sounds.beep({ lane: next, nearness: 0.2, aligned: false }); }
+      // A clear, pitched "tok" at the bat's position on every step; a duller
+      // thud when you are already against a side wall.
+      if (next !== prev) sounds.batMove(next, false);
+      else sounds.batMove(prev, true);
       updateLock();
       return next;
     });
@@ -430,8 +433,10 @@ export default function RallyGame() {
           so a lane on your left really sounds on your left and a lane on your right sounds on your
           right, and each lane also has its own musical pitch, low on the left and rising to the
           right, so you can pinpoint the exact lane. The tone grows louder and brighter with
-          quickening beeps as it nears. Slide your bat with the left and right arrow keys until you
-          hear a steady lock tone &mdash; that means your bat is in the ball&rsquo;s lane &mdash;
+          quickening beeps as it nears. Slide your bat with the left and right arrow keys: each step
+          plays a clear knock whose pitch tells you which lane your bat is in, low on the left and
+          rising to the right, so you always know where you are. Line your bat up with the ball until
+          you hear a steady lock tone &mdash; that means your bat is in the ball&rsquo;s lane &mdash;
           then press the up arrow to hit as the beeps become fastest. A clean hit sends it rocketing
           back to Dobby with a sharp knock.
         </p>

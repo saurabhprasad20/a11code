@@ -282,13 +282,32 @@ function lockOn(on) {
   }
 }
 
-// Your bat striking the ball: a bright, clean knock at the ball's position.
+// Your bat striking the ball: a bright, punchy, clearly audible knock at the
+// ball's position, so a clean hit feels solid.
 function takPlayer(lane) {
   const ac = getCtx();
   if (!ac) return;
   const pos = lanePos(lane, 1);
-  playTone(ac, { freq: 560, type: 'triangle', dur: 0.13, gain: 0.34, freqEnd: 300, pos });
-  playNoise(ac, { dur: 0.05, gain: 0.16, type: 'highpass', freq: 3200, attack: 0.05, pos });
+  playTone(ac, { freq: 600, type: 'triangle', dur: 0.15, gain: 0.42, freqEnd: 260, pos });
+  playTone(ac, { freq: 900, type: 'sine', dur: 0.08, gain: 0.18, pos });
+  playNoise(ac, { dur: 0.05, gain: 0.2, type: 'highpass', freq: 3200, attack: 0.05, pos });
+}
+
+// The bat's own position cue: a crisp, fairly loud wooden "tok" placed exactly
+// where your bat is (bottom of the court, panned to its lane) and pitched to
+// that lane's note, so every left/right step tells you clearly where you are.
+// A duller thud plays when you are already against a side wall.
+function batMove(lane, blocked) {
+  const ac = getCtx();
+  if (!ac) return;
+  const pos = lanePos(lane, 1);
+  if (blocked) {
+    playTone(ac, { freq: 150, type: 'sine', dur: 0.12, gain: 0.24, freqEnd: 90, pos });
+    return;
+  }
+  const freq = laneToFreq(lane);
+  playTone(ac, { freq, type: 'triangle', dur: 0.12, gain: 0.36, freqEnd: freq * 0.6, pos });
+  playTone(ac, { freq: freq * 2, type: 'square', dur: 0.04, gain: 0.1, pos });
 }
 
 // Dobby striking the ball back: a clear, deeper "pock" from far in front, so it
@@ -442,6 +461,7 @@ const sounds = {
   beep,
   lockOn,
   takPlayer,
+  batMove,
   takBot,
   whiff,
   edge,
