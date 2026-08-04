@@ -27,7 +27,7 @@ export const games = [
     id: 'sound-rally',
     title: 'Sound Rally',
     description:
-      'A fast back-and-forth volley you play entirely by ear against Dobby. The court has ten lanes; a buzzing ball pans left to right so you can hear which lane it is in and speeds up in pitch as it nears you. Slide your bat until you hear the steady lock tone, then hit as the beeps get fastest to fire it back. Miss, mistime, or edge it and you lose a chance; do the same to Dobby and it loses one. Beware pace balls that surge and spin balls that drift. Headphones strongly recommended.',
+      'A fast back-and-forth volley you play entirely by ear against Dobby. The court has eight lanes; a buzzing ball is placed in 3D space and each lane has its own musical pitch, so you can hear exactly which lane it is in, and it speeds up in pitch as it nears you. Slide your bat until you hear the steady lock tone, then hit as the beeps get fastest to fire it back. Swing as often as you like; you only lose a chance if the ball gets past your bat, and Dobby loses one if it gets past his. Beware pace balls that surge and spin balls that drift. Headphones strongly recommended.',
     tagline: 'A volley you play entirely by ear',
     type: 'web',
   },

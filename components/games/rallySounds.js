@@ -50,24 +50,27 @@ function getCtx() {
   return ctx;
 }
 
-// Ten pleasant ascending notes (a major-pentatonic run) — one per lane, so the
-// lane can be heard as a pitch as well as a direction.
-const LANE_NOTES = [196.0, 220.0, 261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3];
+// Eight pleasant ascending notes (a major-pentatonic run) — one per lane, so
+// the lane can be heard as a pitch as well as a direction.
+const LANE_NOTES = [196.0, 220.0, 261.6, 293.7, 329.6, 392.0, 440.0, 523.3];
+const NUM_LANES = LANE_NOTES.length;
+const LAST_LANE = NUM_LANES - 1;
+const MID_LANE = LAST_LANE / 2;
 
 function laneToFreq(lane) {
-  const clamped = Math.max(0, Math.min(9, lane));
+  const clamped = Math.max(0, Math.min(LAST_LANE, lane));
   const lo = Math.floor(clamped);
-  const hi = Math.min(9, lo + 1);
+  const hi = Math.min(LAST_LANE, lo + 1);
   const frac = clamped - lo;
   return LANE_NOTES[lo] * ((LANE_NOTES[hi] / LANE_NOTES[lo]) ** frac);
 }
 
-// Convert a lane (0..9) and nearness (0 far .. 1 at the baseline) into a 3D
-// position. The horizontal angle depends only on the lane (x scales with depth)
-// so a lane keeps the same direction as it approaches; depth shrinks as it
-// nears so it gets closer and louder.
+// Convert a lane and nearness (0 far .. 1 at the baseline) into a 3D position.
+// The horizontal angle depends only on the lane (x scales with depth) so a lane
+// keeps the same direction as it approaches; depth shrinks as it nears so it
+// gets closer and louder.
 function lanePos(lane, nearness) {
-  const laneNorm = (lane - 4.5) / 4.5; // -1 .. 1
+  const laneNorm = (lane - MID_LANE) / MID_LANE; // -1 .. 1
   const depth = 1.4 + (1 - Math.max(0, Math.min(1, nearness))) * 8.6; // 1.4 near .. 10 far
   return { x: laneNorm * depth * 0.95, y: 0, z: -depth };
 }
@@ -348,7 +351,7 @@ function fallAndCrash(lane, side = 'near') {
   playTone(ac, { freq: 620, type: 'sine', dur: 0.34, gain: 0.16, freqEnd: 150, pos: from });
   // Wall/stumps impact: just behind you for a near miss, far in front for a far
   // miss at Dobby's end.
-  const laneX = (lane - 4.5) / 4.5;
+  const laneX = (lane - MID_LANE) / MID_LANE;
   const impact = side === 'near'
     ? { x: laneX * 1.2, y: 0, z: 1.5 }
     : { x: laneX * 6, y: 0, z: -9 };

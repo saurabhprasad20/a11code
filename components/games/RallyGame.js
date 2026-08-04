@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import sounds from './rallySounds';
 import styles from './games.module.css';
 
-const LANES = 10;
+const LANES = 8;
 const START_CHANCES = 10;
 
 // Difficulty presets. `ballSpeed` is in court-lengths per second; the court is
@@ -420,7 +420,7 @@ export default function RallyGame() {
       <div className={styles.game}>
         <p className={styles.instructions}>
           Sound Rally is a fast back-and-forth volley you play entirely by ear against Dobby. The
-          court is split into ten lanes from left to right. You guard the bottom; Dobby guards the
+          court is split into eight lanes from left to right. You guard the bottom; Dobby guards the
           top. Dobby serves the ball toward you and you find it by sound: it is placed in 3D space,
           so a lane on your left really sounds on your left and a lane on your right sounds on your
           right, and each lane also has its own musical pitch, low on the left and rising to the

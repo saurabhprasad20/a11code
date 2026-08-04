@@ -514,9 +514,9 @@
     repeating-linear-gradient(
       to right,
       var(--color-bg-alt),
-      var(--color-bg-alt) calc(10% - 1px),
-      var(--color-border) calc(10% - 1px),
-      var(--color-border) 10%
+      var(--color-bg-alt) calc(12.5% - 1px),
+      var(--color-border) calc(12.5% - 1px),
+      var(--color-border) 12.5%
     );
   overflow: hidden;
 }
