@@ -10,18 +10,18 @@ const START_CHANCES = 10;
 // Difficulty presets. `ballSpeed` is in court-lengths per second; the court is
 // the vertical distance between the two baselines. `trick` scales pace/spin.
 const LEVELS = {
-  easy: { label: 'Easy', ballSpeed: 0.42, botSpeed: 6, botCatch: 0.62, trick: 0.35 },
-  medium: { label: 'Medium', ballSpeed: 0.58, botSpeed: 9, botCatch: 0.78, trick: 0.6 },
-  hard: { label: 'Hard', ballSpeed: 0.8, botSpeed: 14, botCatch: 0.9, trick: 1 },
+  easy: { label: 'Easy', ballSpeed: 0.28, botSpeed: 5, botCatch: 0.6, trick: 0.3 },
+  medium: { label: 'Medium', ballSpeed: 0.4, botSpeed: 8, botCatch: 0.76, trick: 0.55 },
+  hard: { label: 'Hard', ballSpeed: 0.56, botSpeed: 12, botCatch: 0.88, trick: 0.9 },
 };
 
 // y runs 0 (your baseline, bottom) .. 1 (Dobby's baseline, top).
 const PLAYER_ZONE = 0.2; // you may swing when the ball is within this of the bottom
 const BOT_ZONE = 0.9; // Dobby resolves its shot when the ball reaches here
 
-function panForLane(laneFloat) {
-  return (laneFloat - (LANES - 1) / 2) / ((LANES - 1) / 2);
-}
+// The ball's true position is spatialised in 3D by the sound engine from the
+// lane number itself; the visual court derives its left offset directly.
+
 
 function loadStat(key, def) {
   try {
@@ -103,7 +103,7 @@ export default function RallyGame() {
 
   const endGame = useCallback((playerWon) => {
     ball.current.active = false;
-    sounds.buzzStop();
+    sounds.ballStop();
     sounds.lockOn(false);
     sounds.ambienceStop();
     if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
@@ -143,12 +143,14 @@ export default function RallyGame() {
       spinRate,
       paceApplied: false,
       quality: 0,
+      playerFailed: null,
+      botFailed: null,
     };
     swungRef.current = false;
     botResolvedRef.current = false;
     lastBeepRef.current = 0;
     sounds.serveCue();
-    sounds.buzzStart();
+    sounds.ballStart();
     announce('Dobby serves. Find the ball by its sound, line up your bat, and hit Up when it is closest.');
   }, [announce]);
 
@@ -160,15 +162,14 @@ export default function RallyGame() {
   // A point has ended. `loser` is 'player' or 'bot'.
   const resolvePoint = useCallback((loser, reason) => {
     const b = ball.current;
-    const pan = panForLane(b.laneFloat);
+    const lane = b.laneFloat;
     b.active = false;
-    sounds.buzzStop();
+    sounds.ballStop();
     sounds.lockOn(false);
     paintBall();
 
     if (loser === 'player') {
-      if (reason === 'sideways') sounds.edge(pan);
-      sounds.thud(pan);
+      sounds.fallAndCrash(lane, 'near');
       sounds.pointLost();
       const next = playerScoreRef.current - 1;
       playerScoreRef.current = next;
@@ -180,21 +181,24 @@ export default function RallyGame() {
       announce(`${msg} Score, you ${next}, Dobby ${botScoreRef.current}.`);
       if (next <= 0) { endGame(false); return; }
     } else {
-      sounds.whoosh(pan);
+      // The ball beat Dobby and crashed at his end.
+      sounds.fallAndCrash(lane, 'far');
       sounds.pointWon();
       const next = botScoreRef.current - 1;
       botScoreRef.current = next;
       setBotScore(next);
       const msg = reason === 'sideways'
-        ? 'Dobby edged it away! You win a chance.'
-        : 'Dobby missed it! You win a chance.';
+        ? 'Past Dobby! He got an edge but could not stop it. You win a chance.'
+        : 'Past Dobby! He could not reach it. You win a chance.';
       announce(`${msg} Score, you ${playerScoreRef.current}, Dobby ${next}.`);
       if (next <= 0) { endGame(true); return; }
     }
-    scheduleServe(1300);
+    scheduleServe(1400);
   }, [announce, endGame, scheduleServe]);
 
-  // Dobby's return attempt when the ball reaches the top zone.
+  // Dobby's return attempt when the ball reaches the top zone. On a miss the
+  // ball is allowed to keep travelling up past Dobby (so you hear it complete
+  // the trip) and the point resolves only when it reaches his baseline.
   function botAttempt() {
     const b = ball.current;
     botResolvedRef.current = true;
@@ -205,46 +209,54 @@ export default function RallyGame() {
     const reached = laneDiff <= 0.7;
     if (reached && Math.random() < catchProb) {
       // Dobby returns it: send it back down, possibly with a new trick.
-      sounds.tak({ pan: panForLane(b.laneFloat), who: 'bot' });
+      sounds.takBot(b.laneFloat);
       b.dir = 'down';
       b.y = BOT_ZONE;
       b.speed = lvl.ballSpeed * (1 + Math.random() * 0.3 * lvl.trick);
       b.paceApplied = false;
+      b.playerFailed = null;
       const roll = Math.random();
       b.type = roll < 0.3 * lvl.trick ? 'pace' : (roll < 0.6 * lvl.trick ? 'spin' : 'straight');
       b.spinRate = b.type === 'spin' ? (Math.random() < 0.5 ? -1 : 1) * (0.6 + lvl.trick * 0.9) : 0;
       swungRef.current = false;
       lastBeepRef.current = 0;
     } else {
-      resolvePoint('bot', reached ? 'sideways' : 'miss');
+      // Dobby has beaten it; let the ball run on to his baseline before the
+      // point is awarded.
+      b.botFailed = reached ? 'sideways' : 'miss';
+      if (b.botFailed === 'sideways') sounds.edge(b.laneFloat);
     }
   }
 
-  // The player swings.
+  // The player swings. A clean, aligned, in-zone hit sends the ball back up.
+  // Any other swing is a failed shot: the ball keeps coming and the point is
+  // decided when it passes your baseline, so the trip is always heard in full.
   const swing = useCallback(() => {
     const b = ball.current;
     if (phaseRef.current !== 'playing' || !b.active || b.dir !== 'down' || swungRef.current) return;
     swungRef.current = true;
-    if (b.y > PLAYER_ZONE) { resolvePoint('player', 'early'); return; }
+    const inZone = b.y <= PLAYER_ZONE;
     const laneDiff = Math.abs(playerLaneRef.current - Math.round(b.laneFloat));
-    const pan = panForLane(b.laneFloat);
-    if (laneDiff === 0) {
+    if (inZone && laneDiff === 0) {
       const quality = 1 - b.y / PLAYER_ZONE; // near the baseline = better timed
       b.quality = quality;
-      sounds.tak({ pan, who: 'player' });
+      sounds.takPlayer(b.laneFloat);
       b.dir = 'up';
       b.y = Math.max(b.y, 0.05);
       const lvl = levelRef.current;
       b.speed = lvl.ballSpeed * (1 + quality * 0.6);
+      b.botFailed = null;
       botResolvedRef.current = false;
       announce(quality > 0.6 ? 'Sweetly timed! Back to Dobby.' : 'Good return! Back to Dobby.');
-    } else if (laneDiff === 1) {
-      resolvePoint('player', 'sideways');
     } else {
-      sounds.whiff(pan);
-      resolvePoint('player', 'miss');
+      // A failed swing: the ball keeps coming and the miss is announced when it
+      // passes your baseline, so you hear it complete the trip.
+      const reason = inZone ? (laneDiff === 1 ? 'sideways' : 'miss') : 'early';
+      b.playerFailed = reason;
+      if (reason === 'sideways') sounds.edge(b.laneFloat);
+      else sounds.whiff(b.laneFloat);
     }
-  }, [announce, resolvePoint]);
+  }, [announce]);
 
   // The main animation loop.
   const loop = useCallback((ts) => {
@@ -260,7 +272,7 @@ export default function RallyGame() {
         && ((b.dir === 'down' && b.y < 0.55) || (b.dir === 'up' && b.y > 0.45))) {
         b.speed *= 1.5;
         b.paceApplied = true;
-        sounds.paceCue(panForLane(b.laneFloat));
+        sounds.paceCue(b.laneFloat);
       }
       // Spin drifts the lane, reflecting off the side walls so it never leaves.
       if (b.spinRate) {
@@ -279,26 +291,33 @@ export default function RallyGame() {
         botLaneRef.current += step;
       }
 
-      const pan = panForLane(b.laneFloat);
-      const nearness = b.dir === 'down' ? 1 - b.y : b.y;
-      sounds.buzzUpdate({ pan, nearness: b.dir === 'down' ? 1 - b.y : 0.3, moving: b.dir });
+      // 3D audio: nearness = proximity to you (y = 0 is your baseline).
+      const nearness = 1 - b.y;
+      sounds.ballUpdate({ lane: b.laneFloat, nearness, dir: b.dir });
 
       // Proximity beeps while the ball approaches you.
       if (b.dir === 'down') {
-        const interval = 380 - (1 - b.y) * 295; // 380ms far -> ~85ms near
+        const interval = 440 - (1 - b.y) * 330; // slower far -> fast near
         if (ts - lastBeepRef.current >= interval) {
           const aligned = Math.round(b.laneFloat) === playerLaneRef.current;
-          sounds.beep({ pan, nearness: 1 - b.y, aligned });
+          sounds.beep({ lane: b.laneFloat, nearness: 1 - b.y, aligned });
           lastBeepRef.current = ts;
         }
       }
       updateLock();
 
-      // Boundary outcomes.
+      // Boundary outcomes. The ball always travels the full court before a
+      // point is awarded, so both directions are heard in sync.
       if (b.dir === 'down' && b.y <= 0) {
-        resolvePoint('player', 'miss');
-      } else if (b.dir === 'up' && b.y >= BOT_ZONE && !botResolvedRef.current) {
-        botAttempt();
+        // Reached your baseline: a clean hit would already have reversed it, so
+        // arriving here means you did not return it.
+        resolvePoint('player', b.playerFailed || 'miss');
+      } else if (b.dir === 'up') {
+        if (b.y >= BOT_ZONE && !botResolvedRef.current) {
+          botAttempt();
+        } else if (b.y >= 1 && botResolvedRef.current && b.botFailed) {
+          resolvePoint('bot', b.botFailed);
+        }
       }
       paintBall();
     }
@@ -336,7 +355,7 @@ export default function RallyGame() {
   function backToSetup() {
     if (serveTimerRef.current) window.clearTimeout(serveTimerRef.current);
     ball.current.active = false;
-    sounds.buzzStop();
+    sounds.ballStop();
     sounds.lockOn(false);
     sounds.ambienceStop();
     if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
@@ -364,7 +383,7 @@ export default function RallyGame() {
     setPlayerLane((prev) => {
       const next = Math.max(0, Math.min(LANES - 1, prev + delta));
       playerLaneRef.current = next;
-      if (next !== prev) { sounds.beep({ pan: panForLane(next), nearness: 0.2, aligned: false }); }
+      if (next !== prev) { sounds.beep({ lane: next, nearness: 0.2, aligned: false }); }
       updateLock();
       return next;
     });
@@ -395,7 +414,7 @@ export default function RallyGame() {
   useEffect(() => () => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     if (serveTimerRef.current) window.clearTimeout(serveTimerRef.current);
-    sounds.buzzStop();
+    sounds.ballStop();
     sounds.lockOn(false);
     sounds.ambienceStop();
   }, []);
@@ -407,11 +426,14 @@ export default function RallyGame() {
         <p className={styles.instructions}>
           Sound Rally is a fast back-and-forth volley you play entirely by ear against Dobby. The
           court is split into ten lanes from left to right. You guard the bottom; Dobby guards the
-          top. Dobby serves the ball toward you with a buzzing sound: the further left or right it
-          is, the further left or right it sounds, and it rises in pitch with quick beeps as it gets
-          closer. Slide your bat with the left and right arrow keys until you hear a steady lock
-          tone &mdash; that means your bat is in the ball&rsquo;s lane &mdash; then press the up
-          arrow to hit as the beeps become fastest. A clean hit sends it rocketing back to Dobby.
+          top. Dobby serves the ball toward you and you find it by sound: it is placed in 3D space,
+          so a lane on your left really sounds on your left and a lane on your right sounds on your
+          right, and each lane also has its own musical pitch, low on the left and rising to the
+          right, so you can pinpoint the exact lane. The tone grows louder and brighter with
+          quickening beeps as it nears. Slide your bat with the left and right arrow keys until you
+          hear a steady lock tone &mdash; that means your bat is in the ball&rsquo;s lane &mdash;
+          then press the up arrow to hit as the beeps become fastest. A clean hit sends it rocketing
+          back to Dobby with a sharp knock.
         </p>
         <p className={styles.recommend}>
           <strong>Keys:</strong> left and right arrows move your bat; up arrow or space hits; press
