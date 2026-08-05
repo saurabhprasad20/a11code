@@ -28,6 +28,14 @@ plan.txt
 game.txt
 .playwright-mcp/
 
+# Advanced Programming (Java) slide sources and extraction artifacts — not for the site.
+# Only the generated data/ap/*.js course files are committed.
+/AP slides ppt/
+/slides_extracted/
+/slides_images/
+extract_slides.py
+extract_images.py
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

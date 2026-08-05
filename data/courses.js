@@ -1,3 +1,8 @@
+import { oopCourse } from './ap/oop';
+import { advancedCourse } from './ap/advanced';
+import { concurrencyCourse } from './ap/concurrency';
+import { patternsCourse } from './ap/patterns';
+
 export const courses = [
   {
     id: 'python-for-beginners',
@@ -1947,4 +1952,8 @@ todoApp();` },
       },
     ],
   },
+  oopCourse,
+  advancedCourse,
+  concurrencyCourse,
+  patternsCourse,
 ];
