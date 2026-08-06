@@ -33,12 +33,11 @@ export default function ThemeToggle() {
       className={styles.toggle}
       aria-pressed={dark}
       onClick={() => setDark((value) => !value)}
-      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       <span className={styles.icon} aria-hidden="true">
         {dark ? '\u2600' : '\u263E'}
       </span>
-      <span className={styles.label}>{dark ? 'Light' : 'Dark'}</span>
+      <span className={styles.label}>Dark mode</span>
     </button>
   );
 }
