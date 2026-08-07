@@ -1,5 +1,6 @@
 import { courses } from '../../../data/courses';
 import CourseDetail from '../../../components/CourseDetail';
+import CourseGate from '../../../components/CourseGate';
 
 export function generateStaticParams() {
   return courses.map((course) => ({ courseId: course.id }));
@@ -15,5 +16,9 @@ export function generateMetadata({ params }) {
 }
 
 export default function CourseDetailPage({ params }) {
-  return <CourseDetail courseId={params.courseId} />;
+  return (
+    <CourseGate>
+      <CourseDetail courseId={params.courseId} />
+    </CourseGate>
+  );
 }

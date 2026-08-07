@@ -2,6 +2,7 @@ import './globals.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RouteFocus from '../components/RouteFocus';
+import { AuthProvider } from '../components/AuthProvider';
 
 export const metadata = {
   title: 'A11Code \u2014 Breaking Barriers in STEM',
@@ -18,12 +19,14 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <RouteFocus />
-        <Header />
-        <main id="main-content" role="main" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <RouteFocus />
+          <Header />
+          <main id="main-content" role="main" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

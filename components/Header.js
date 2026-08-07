@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { courses } from '../data/courses';
 import ThemeToggle from './ThemeToggle';
+import AuthButton from './AuthButton';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -77,6 +78,7 @@ export default function Header() {
           </a>
 
           <div className={styles.tools}>
+            <AuthButton />
             <ThemeToggle />
           </div>
         </div>
