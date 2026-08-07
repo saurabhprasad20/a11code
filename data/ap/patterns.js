@@ -1574,7 +1574,7 @@ public class ATMMachine {
         },
         {
           type: `text`,
-          text: `Now trace the roles one at a time. Structure: Subject declares add, remove, announce, getUpdate, and startPoll. Observer declares update. Backpack implements Subject, owns List<Observer> and the discussion string, and broadcasts update to its list. Student implements Observer, keeps a Subject reference, asks it for getUpdate(), and prints the message. CSE201 creates one Backpack, registers five Students, then starts a poll.`
+          text: `Now trace the roles one at a time. Structure: Subject declares add, remove, announce, getUpdate, and startPoll. Observer declares update. Backpack implements Subject, owns List<Observer> and the discussion string, and broadcasts update to its list. Student implements Observer, keeps a Subject reference, asks it for getUpdate(), and prints the message. Classroom creates one Backpack, registers five Students, then starts a poll.`
         },
         {
           type: `code`,
@@ -1614,14 +1614,14 @@ class Student implements Observer {
         System.out.println("New message: "+msg);
     }
 }
-public class CSE201 {
+public class Classroom {
     public static void main(String[] args) {
-        Subject cse201 = new Backpack();
+        Subject classroom = new Backpack();
         for(int i=0; i<5; i++) {
-            Observer student = new Student(cse201);
-            cse201.add(student);
+            Observer student = new Student(classroom);
+            classroom.add(student);
         }
-        cse201.startPoll("Do you want one more lab?");
+        classroom.startPoll("Do you want one more lab?");
     }
 }`
         },

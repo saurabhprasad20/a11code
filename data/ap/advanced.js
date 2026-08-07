@@ -790,7 +790,7 @@ finally {
         { type: `text`, text: `Notice the difference between making one directory, making all needed parent directories, and listing the names contained in a directory.` },
         { type: `text`, text: `File can create directories and list their contents: mkdir() makes one directory, mkdirs() makes an entire directory structure, and list() lists names under a directory.` },
         { type: `code`, code: `public static void main(String[] args) {
-    String dirname = "/tmp/vivek"; // works on Windows too
+    String dirname = "/tmp/mydata"; // works on Windows too
     File f = new File(dirname);
     f.mkdirs();
     String[] paths = (new File("/tmp")).list();
