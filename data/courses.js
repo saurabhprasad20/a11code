@@ -6,6 +6,17 @@ import { pythonAdvancedChaptersA } from './ap/python_advanced_a';
 import { pythonAdvancedChaptersB } from './ap/python_advanced_b';
 import { androidCourse } from './ap/android';
 import { mobileSensingCourse } from './ap/mobile_sensing';
+import { osChaptersA } from './ap/os_a';
+import { osChaptersB } from './ap/os_b';
+
+const operatingSystemsCourse = {
+  id: 'operating-systems',
+  title: 'Operating Systems',
+  description:
+    'A thorough, university-level introduction to how operating systems work, built for learners who already program. It moves from what an operating system is and how a computer is structured, through processes, inter-process communication, and CPU scheduling, into synchronization and deadlocks, then memory and virtual memory, and finally file systems and input/output. Every concept, code example, and diagram is presented in clear, linear, screen-reader-friendly language.',
+  level: 'Advanced',
+  chapters: [...osChaptersA, ...osChaptersB],
+};
 
 const pythonAdvancedCourse = {
   id: 'advanced-python-programming',
@@ -1972,4 +1983,5 @@ todoApp();` },
   pythonAdvancedCourse,
   androidCourse,
   mobileSensingCourse,
+  operatingSystemsCourse,
 ];
