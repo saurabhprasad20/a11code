@@ -36,6 +36,15 @@ game.txt
 extract_slides.py
 extract_images.py
 
+# Python and Mobile Computing source material and PDF extraction artifacts — not for the site.
+/python CSE course/
+/Mobile Computing/
+/pdf_extracted/
+/pdf_pages/
+extract_pdfs.py
+render_pdfs.py
+extract_pptx_extra.py
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

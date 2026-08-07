@@ -2,6 +2,19 @@ import { oopCourse } from './ap/oop';
 import { advancedCourse } from './ap/advanced';
 import { concurrencyCourse } from './ap/concurrency';
 import { patternsCourse } from './ap/patterns';
+import { pythonAdvancedChaptersA } from './ap/python_advanced_a';
+import { pythonAdvancedChaptersB } from './ap/python_advanced_b';
+import { androidCourse } from './ap/android';
+import { mobileSensingCourse } from './ap/mobile_sensing';
+
+const pythonAdvancedCourse = {
+  id: 'advanced-python-programming',
+  title: 'Advanced Python Programming',
+  description:
+    'A deeper, university-level journey through Python for learners who already know the basics. It builds a precise mental model of the language — types, the memory model, mutability, specifications and testing — then works through strings, conditionals, exceptions and files, the core data structures, iteration and recursion, object-oriented programming, and classic searching, sorting, and sequence algorithms, finishing with NumPy and plotting. Every concept, code example, and figure is presented in clear, linear, screen-reader-friendly language.',
+  level: 'Intermediate',
+  chapters: [...pythonAdvancedChaptersA, ...pythonAdvancedChaptersB],
+};
 
 export const courses = [
   {
@@ -1956,4 +1969,7 @@ todoApp();` },
   advancedCourse,
   concurrencyCourse,
   patternsCourse,
+  pythonAdvancedCourse,
+  androidCourse,
+  mobileSensingCourse,
 ];
