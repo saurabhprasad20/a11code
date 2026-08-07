@@ -8,6 +8,28 @@ import { androidCourse } from './ap/android';
 import { mobileSensingCourse } from './ap/mobile_sensing';
 import { osChaptersA } from './ap/os_a';
 import { osChaptersB } from './ap/os_b';
+import { cnChaptersA } from './ap/cn_a';
+import { cnChaptersB } from './ap/cn_b';
+import { cnChaptersC } from './ap/cn_c';
+import { cnChaptersD } from './ap/cn_d';
+import { cnChaptersE } from './ap/cn_e';
+import { cnChaptersF } from './ap/cn_f';
+
+const computerNetworksCourse = {
+  id: 'computer-networks',
+  title: 'Computer Networks',
+  description:
+    'A complete, university-level tour of how the Internet works, built for learners who already program. It follows the classic top-down path: from what the Internet is and how its edge, core, and performance behave, up through the application layer (the web, DNS, email, and socket programming), the transport layer (UDP, reliable data transfer, TCP, flow and congestion control), the network layer data plane (IP addressing, forwarding, and routers) and control plane (link-state, distance-vector, OSPF and BGP routing), and finally the link layer and local networks, ending with a full day-in-the-life of a web request. Every protocol, calculation, and diagram is re-explained and described in clear, linear, screen-reader-friendly language.',
+  level: 'Advanced',
+  chapters: [
+    ...cnChaptersA,
+    ...cnChaptersB,
+    ...cnChaptersC,
+    ...cnChaptersD,
+    ...cnChaptersE,
+    ...cnChaptersF,
+  ],
+};
 
 const operatingSystemsCourse = {
   id: 'operating-systems',
@@ -1984,4 +2006,5 @@ todoApp();` },
   androidCourse,
   mobileSensingCourse,
   operatingSystemsCourse,
+  computerNetworksCourse,
 ];
