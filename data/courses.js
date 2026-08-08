@@ -14,6 +14,26 @@ import { cnChaptersC } from './ap/cn_c';
 import { cnChaptersD } from './ap/cn_d';
 import { cnChaptersE } from './ap/cn_e';
 import { cnChaptersF } from './ap/cn_f';
+import { dbmsChaptersA } from './ap/dbms_a';
+import { dbmsChaptersB } from './ap/dbms_b';
+import { dbmsChaptersC } from './ap/dbms_c';
+import { dbmsChaptersD } from './ap/dbms_d';
+import { dbmsChaptersE } from './ap/dbms_e';
+
+const databaseSystemsCourse = {
+  id: 'database-management-systems',
+  title: 'Database Management Systems',
+  description:
+    'A complete, university-level introduction to how databases work, built for learners who already program. It moves from what a database system is, through data modelling with the entity-relationship model, the relational model and relational algebra, then a thorough treatment of SQL — from data definition and basic queries to joins, views, transactions, constraints, authorization, programming interfaces, functions, triggers, recursion, and OLAP — and finishes with physical storage access through indexing, B+-trees, hashing, and bitmap indices. Every concept, query, and diagram is re-explained and described in clear, linear, screen-reader-friendly language.',
+  level: 'Advanced',
+  chapters: [
+    ...dbmsChaptersA,
+    ...dbmsChaptersB,
+    ...dbmsChaptersC,
+    ...dbmsChaptersD,
+    ...dbmsChaptersE,
+  ],
+};
 
 const computerNetworksCourse = {
   id: 'computer-networks',
@@ -2007,4 +2027,5 @@ todoApp();` },
   mobileSensingCourse,
   operatingSystemsCourse,
   computerNetworksCourse,
+  databaseSystemsCourse,
 ];

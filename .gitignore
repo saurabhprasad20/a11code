@@ -58,6 +58,13 @@ extract_os.py
 /cn_images/
 extract_cn.py
 
+# DBMS source material (copyrighted textbook slides) and extraction artifacts —
+# NOT for the site. Only the original, transformed course files ship.
+/DBMS/
+/dbms_extracted/
+/dbms_images/
+extract_dbms.py
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
