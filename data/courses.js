@@ -22,6 +22,26 @@ import { dbmsChaptersE } from './ap/dbms_e';
 import { dbmsChaptersF } from './ap/dbms_f';
 import { dbmsChaptersG } from './ap/dbms_g';
 import { dbmsChaptersH } from './ap/dbms_h';
+import { csChaptersA } from './ap/cs_a';
+import { csChaptersB } from './ap/cs_b';
+import { csChaptersC } from './ap/cs_c';
+import { csChaptersD } from './ap/cs_d';
+import { csChaptersE } from './ap/cs_e';
+
+const computerSecurityCourse = {
+  id: 'computer-security',
+  title: 'Computer Security',
+  description:
+    'A complete, university-level introduction to computer and information security, built for learners who already program. It moves from the foundations and the confidentiality-integrity-availability model, through cryptography (classical ciphers, symmetric and public-key encryption, hashing, and digital signatures), network, privacy, and anonymity concerns, web security attacks and defenses, and intrusion detection and prevention, and finishes with software security testing, risk management, and the economics and ethics of security. Every concept, attack, and diagram is re-explained and described in clear, linear, screen-reader-friendly language.',
+  level: 'Advanced',
+  chapters: [
+    ...csChaptersA,
+    ...csChaptersB,
+    ...csChaptersC,
+    ...csChaptersD,
+    ...csChaptersE,
+  ],
+};
 
 const databaseSystemsCourse = {
   id: 'database-management-systems',
@@ -2034,4 +2054,5 @@ todoApp();` },
   operatingSystemsCourse,
   computerNetworksCourse,
   databaseSystemsCourse,
+  computerSecurityCourse,
 ];

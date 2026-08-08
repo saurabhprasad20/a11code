@@ -65,6 +65,12 @@ extract_cn.py
 /dbms_images/
 extract_dbms.py
 
+# Computer Security slide sources and extraction artifacts — not for the site.
+/ComputerSecurity/
+/cs_extracted/
+/cs_images/
+extract_cs.py
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
