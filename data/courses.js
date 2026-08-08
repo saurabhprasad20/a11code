@@ -19,19 +19,25 @@ import { dbmsChaptersB } from './ap/dbms_b';
 import { dbmsChaptersC } from './ap/dbms_c';
 import { dbmsChaptersD } from './ap/dbms_d';
 import { dbmsChaptersE } from './ap/dbms_e';
+import { dbmsChaptersF } from './ap/dbms_f';
+import { dbmsChaptersG } from './ap/dbms_g';
+import { dbmsChaptersH } from './ap/dbms_h';
 
 const databaseSystemsCourse = {
   id: 'database-management-systems',
   title: 'Database Management Systems',
   description:
-    'A complete, university-level introduction to how databases work, built for learners who already program. It moves from what a database system is, through data modelling with the entity-relationship model, the relational model and relational algebra, then a thorough treatment of SQL — from data definition and basic queries to joins, views, transactions, constraints, authorization, programming interfaces, functions, triggers, recursion, and OLAP — and finishes with physical storage access through indexing, B+-trees, hashing, and bitmap indices. Every concept, query, and diagram is re-explained and described in clear, linear, screen-reader-friendly language.',
+    'A complete, university-level introduction to how databases work, built for learners who already program. It moves from what a database system is, through data modelling with the entity-relationship model, the relational model and relational algebra, then a thorough treatment of SQL — from data definition and basic queries to joins, views, transactions, constraints, authorization, programming interfaces, functions, triggers, recursion, and OLAP. It then covers relational database design and normalization, physical storage and access through indexing, B+-trees, hashing, and bitmap indices, how queries are processed and optimized, and finally transaction management with concurrency control and recovery. Every concept, query, and diagram is re-explained and described in clear, linear, screen-reader-friendly language.',
   level: 'Advanced',
   chapters: [
     ...dbmsChaptersA,
     ...dbmsChaptersB,
     ...dbmsChaptersC,
     ...dbmsChaptersD,
+    ...dbmsChaptersF,
     ...dbmsChaptersE,
+    ...dbmsChaptersH,
+    ...dbmsChaptersG,
   ],
 };
 
