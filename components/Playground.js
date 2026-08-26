@@ -182,27 +182,6 @@ export default function Playground() {
             ))}
           </select>
         </div>
-
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleRun}
-            disabled={running}
-            aria-keyshortcuts="Control+Enter"
-            ref={runButtonRef}
-          >
-            {running ? 'Running\u2026' : 'Run'}
-          </button>
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={resetToExample}
-            disabled={running}
-          >
-            Reset to example
-          </button>
-        </div>
       </div>
 
       <div className={styles.editorGroup}>
@@ -254,6 +233,27 @@ export default function Playground() {
           autoComplete="off"
           rows={4}
         />
+      </div>
+
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleRun}
+          disabled={running}
+          aria-keyshortcuts="Control+Enter"
+          ref={runButtonRef}
+        >
+          {running ? 'Running\u2026' : 'Run'}
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={resetToExample}
+          disabled={running}
+        >
+          Reset to example
+        </button>
       </div>
 
       <section
