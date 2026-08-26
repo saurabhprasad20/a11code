@@ -11,6 +11,13 @@ export default function Home() {
       linkLabel: 'Browse Courses',
     },
     {
+      title: 'Code Playground',
+      description:
+        'Write, compile, and run programs in Python, Java, C, C++, and more, right in your browser — with an accessible editor and spoken results.',
+      href: '/playground',
+      linkLabel: 'Open Playground',
+    },
+    {
       title: 'Study Materials',
       description:
         'Digitized, accessible study materials for Mathematics and Science subjects from class 8 onward.',

@@ -19,6 +19,7 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/blogs', label: 'Blogs' },
     { href: '/resources', label: 'Resources' },
+    { href: '/playground', label: 'Playground' },
     { href: '/games', label: 'Accessible Games' },
     { href: '/contact', label: 'Contact Us' },
   ];

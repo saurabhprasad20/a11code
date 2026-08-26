@@ -13,6 +13,7 @@ export default function Footer() {
             <ul className={styles.footerLinks} role="list">
               <li><Link href="/">Home</Link></li>
               <li><Link href="/courses">Courses</Link></li>
+              <li><Link href="/playground">Code Playground</Link></li>
               <li><Link href="/blogs">Blogs</Link></li>
               <li><Link href="/resources">Resources</Link></li>
               <li><Link href="/games">Accessible Games</Link></li>
