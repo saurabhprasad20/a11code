@@ -2,9 +2,36 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { LANGUAGES, getLanguage, runCode } from '../lib/executor';
+import { computeEdit } from '../lib/editorKeys';
 import styles from './Playground.module.css';
 
 const STORAGE_PREFIX = 'a11code-playground:';
+
+// Apply an edit descriptor from computeEdit to a textarea using the browser's
+// own editing commands, so that native undo and redo (Ctrl+Z / Ctrl+Y) keep
+// working. The controlled textarea's onChange fires from these commands and
+// keeps React state in sync.
+function applyEdit(el, edit) {
+  if (edit.caret !== undefined) {
+    el.setSelectionRange(edit.caret, edit.caret);
+    return;
+  }
+  el.setSelectionRange(edit.from, edit.to);
+  let ok = false;
+  try {
+    ok =
+      edit.text === ''
+        ? document.execCommand('delete')
+        : document.execCommand('insertText', false, edit.text);
+  } catch (e) {
+    ok = false;
+  }
+  if (!ok) {
+    el.setRangeText(edit.text, edit.from, edit.to, 'end');
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  el.setSelectionRange(edit.selStart, edit.selEnd);
+}
 
 function buildSamples() {
   const map = {};
@@ -22,13 +49,15 @@ export default function Playground() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const outputRef = useRef(null);
+  const editorRef = useRef(null);
+  const runButtonRef = useRef(null);
   const hydrated = useRef(false);
 
   const language = getLanguage(languageId);
   const code = codeByLang[languageId] ?? '';
 
   // Restore any code the learner saved earlier (per language), after the first
-  // render so the server and client markup match.
+  // render so server and client markup match.
   useEffect(() => {
     if (hydrated.current) return;
     hydrated.current = true;
@@ -95,7 +124,36 @@ export default function Playground() {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       handleRun();
+      return;
     }
+    if (e.isComposing) return;
+
+    // Escape provides a keyboard-only way out of the editor, so that Tab can be
+    // used for indentation without trapping keyboard users.
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (runButtonRef.current) runButtonRef.current.focus();
+      return;
+    }
+
+    const relevant =
+      e.key === 'Enter' || e.key === 'Tab' || e.key === 'Backspace' || e.key.length === 1;
+    if (!relevant) return;
+
+    const el = e.target;
+    const edit = computeEdit({
+      key: e.key,
+      shiftKey: e.shiftKey,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      altKey: e.altKey,
+      value: el.value,
+      start: el.selectionStart,
+      end: el.selectionEnd,
+    });
+    if (!edit) return;
+    e.preventDefault();
+    applyEdit(el, edit);
   }
 
   return (
@@ -132,6 +190,7 @@ export default function Playground() {
             onClick={handleRun}
             disabled={running}
             aria-keyshortcuts="Control+Enter"
+            ref={runButtonRef}
           >
             {running ? 'Running\u2026' : 'Run'}
           </button>
@@ -152,13 +211,16 @@ export default function Playground() {
         </label>
         <p id="pg-code-help" className={styles.help}>
           Write your {language.label} program here. Press Control plus Enter (or
-          Command plus Enter) to run it. The Tab key moves to the next control, so
-          use spaces to indent your code.
+          Command plus Enter) to run it. Enter keeps your indentation, brackets
+          and quotes close automatically, and Tab indents while Shift plus Tab
+          removes indentation. Press Escape to leave the editor and move to the
+          Run button.
         </p>
         <textarea
           id="pg-code"
           className={styles.editor}
           value={code}
+          ref={editorRef}
           onChange={(e) => updateCode(e.target.value)}
           onKeyDown={handleEditorKeyDown}
           aria-describedby="pg-code-help"
