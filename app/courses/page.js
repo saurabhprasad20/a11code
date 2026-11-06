@@ -1,13 +1,19 @@
 import Link from 'next/link';
 import { courses } from '../../data/courses';
+import courseAccess from '../../config/course-access.json';
+import CoursesUnavailable, { unavailableMetadata } from '../../components/CoursesUnavailable';
 
-export const metadata = {
+const { coursesPaused } = courseAccess;
+
+export const metadata = coursesPaused ? unavailableMetadata : {
   title: 'Courses - A11Code',
   description:
     'Discover accessible programming courses designed for visually impaired students. Learn Python, Java, Web Accessibility, and more.',
 };
 
 export default function CoursesPage() {
+  if (coursesPaused) return <CoursesUnavailable />;
+
   return (
     <>
       <section className="page-hero" aria-label="Courses introduction">

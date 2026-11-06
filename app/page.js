@@ -1,12 +1,17 @@
 import Link from 'next/link';
 import styles from './page.module.css';
+import courseAccess from '../config/course-access.json';
+
+const { coursesPaused } = courseAccess;
 
 export default function Home() {
   const services = [
     {
       title: 'Programming Courses',
       description:
-        'Accessible programming courses in Python, Java, and more — designed for screen reader users with hands-on exercises.',
+        coursesPaused
+          ? 'In progress. Please check back later.'
+          : 'Accessible programming courses in Python, Java, and more — designed for screen reader users with hands-on exercises.',
       href: '/courses',
       linkLabel: 'Browse Courses',
     },

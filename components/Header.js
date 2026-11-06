@@ -4,9 +4,12 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { courses } from '../data/courses';
+import courseAccess from '../config/course-access.json';
 import ThemeToggle from './ThemeToggle';
 import AuthButton from './AuthButton';
 import styles from './Header.module.css';
+
+const { coursesPaused } = courseAccess;
 
 export default function Header() {
   const pathname = usePathname();
@@ -118,6 +121,17 @@ export default function Header() {
               </li>
             ))}
             {/* Courses dropdown */}
+            {coursesPaused ? (
+              <li>
+                <Link
+                  href="/courses"
+                  className={styles.navLink}
+                  aria-current={pathname.startsWith('/courses') ? 'page' : undefined}
+                >
+                  Courses
+                </Link>
+              </li>
+            ) : (
             <li
               ref={coursesRef}
               className={styles.dropdown}
@@ -156,6 +170,7 @@ export default function Header() {
                 </ul>
               )}
             </li>
+            )}
           </ul>
         </nav>
         </div>
