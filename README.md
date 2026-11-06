@@ -1,3 +1,30 @@
+# A11Code
+
+## Temporary course pause and restore steps
+
+Courses are temporarily blocked using `"coursesPaused": true` in
+[`config/course-access.json`](config/course-access.json). The catalog and direct
+course links show “In progress. Please check back later.” Course titles,
+descriptions, and lessons are excluded from browser data, even for signed-in
+visitors. All course source files remain intact.
+
+To restore access in a future session:
+
+1. Change `coursesPaused` to `false` in `config/course-access.json`.
+2. Run `npm run build` and verify the catalog, navigation dropdown, and course
+   pages work again, including the existing sign-in gate.
+3. Commit the setting change and push to `master` (`git push origin master`).
+   The Azure workflow deploys the restored site automatically.
+
+Restart `npm run dev` after changing the setting during local development.
+To pause courses again, set the flag to `true`, rebuild, and deploy.
+See [the course access notes](docs/COURSE-ACCESS.md) for details.
+
+## Legacy README
+
+The Create React App instructions below are outdated. This repository now uses
+Next.js: run `npm run dev` locally and `npm run build` to export to `out/`.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
